@@ -1,0 +1,30 @@
+class Piece:
+    def __init__(self, depth, faces):
+        self.depth = depth
+        self.faces = Facse
+
+class Edge(piece):
+    face0: int
+    face1: int
+
+class Corner(piece):
+    face0: int
+    face1: int
+    face2: int
+
+class Center(piece):
+    face0: int
+
+class EdgeCenter(piece):
+    face0: int
+    face1: int
+
+class CornerCenter(piece):
+    face0: int
+    face1: int
+    face:2 int
+
+class Shape:
+    def __init__(self,faces,adjFaces):
+        self.faces = faces
+        self.adjFaces = adjFaces
