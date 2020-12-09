@@ -41,23 +41,18 @@ share two faces .
 When adding a new face, look for two adjacend points are not in
 fullPairs.  Add points n+1 and n+2 to the face and poitns where n is the
 nth point in points.  Repeat until all faces have been created.'''
-
-    face = list(range(shape.sides))
-    net = [face]                                   # The net is initially points that surround that first face.
-    points = list(range(shape.sides))              # List of points that are used by any of the faces.
-    pairs = set({face[i],face[i-1]} for i in face) # List of the pair of points on each end of an edge.
-    fullPairs = []                                 # List of sets of 2 points used by 2 faces, no other shape can be added with these two points..
-    fullPoints = []                                # List of all points that are used by 3 faces or that are connected to FACESATPOINT other points.
+    net = [list(range(shape.sides))]  # The net is initially points that surround that first face.
+    points = list(range(shape.sides)) # List of points that are used by any of the faces.
+    fullPoints = []                   # List of all points that are used by 3 faces.
+    pairs = []                        # List of sets of 2 points used by 2 faces.
 
     def findFullPoints(net: list[list[int]]) -> list[int]:
         '''Take the points in each face in the net. Return a set of all of those
 points.'''
         points = [point for shape in net for point in shape]
-        connections = [point for pair in pairs for point in pairs]
-        return set(point for point in points if points.count(point) == shape.facesAtPoint or connections.count(point) == shape.facesAtPoint)
+        return set(point for point in points if points.count(point) == shape.facesAtPoint)
 
     for face in net:
-        # print(net)
         if len(net) == shape.faces:
             return net, pairs
         else:
