@@ -1,92 +1,90 @@
 #!/usr/bin/python3
 
+class Piece:
+    faces: set[int]
+
+    def __init__(*positions: tuple[int, int]):
+        pass
+
+    def getFaces():
+        pass
+
+class Center(Piece):
+    pass
+
+class Edge(Piece):
+    pass
+
+class Corner(Piece):
+    pass
+
 class Shape:
-    def __init__(self,faces,sides):
+    def __init__(self,faces,sides,facesAtPoint):
         self.faces = faces
         self.sides = sides
+        self.facesAtPoint = facesAtPoint
         self.faceList = list(range(faces))
 
-def makeNet():
-    # List of lists.
-    # The parent list has an arbitrary amount of sublists.
-    # Each sublist represents a point where at least two faces
-    # meet.
-    # The items in the sublist are the faces that meet at that
-    # point.
-    # Each face is denoted by a number.
-    # The length of each list is has to be either 2 or 3.
+tetrahedron  = Shape(4,3,3)
+cube         = Shape(6,4,3)
+octahedron   = Shape(8,3,4)
+dodecahedron = Shape(12,5,3)
+icosahedron  = Shape(20,3,5)
 
-    # Net can start with two faces, all points of each face have to be
-    # labelled.  Only two points will share two faces initially.
+# Pretty sure that this code workds, will test it later.
+def makeNet(shape: Shape) -> tuple[list[list[int]], list[set[int]]]:
+    '''New faces that are added to net can't have points or share pairs of
+points that are in the previous two lists.  Adjacent points in the list
+are adjacent on the face.  Return the net and it pairs of of points that
+share two faces .
 
+When adding a new face, look for two adjacend points are not in
+fullPairs.  Add points n+1 and n+2 to the face and poitns where n is the
+nth point in points.  Repeat until all faces have been created.'''
+    net = [list(range(shape.sides))]  # The net is initially points that surround that first face.
+    points = list(range(shape.sides)) # List of points that are used by any of the faces.
+    fullPoints = []                   # List of all points that are used by 3 faces.
+    pairs = []                        # List of sets of 2 points used by 2 faces.
 
-    # Test for a cube:
-    net = [
-        [0,1],                  # 0
-        [0,1,2],                # 1
-        [0,2],                  # 2
-        [0],                    # 3
-        [1],                    # 4
-        [1],                    # 5
-        [2],                    # 6
-        [2],                    # 7
-    ]
-    faces = 6
+    def findFullPoints(net: list[list[int]]) -> list[int]:
+        '''Take the points in each face in the net. Return a set of all of those
+points.'''
+        points = [point for shape in net for point in shape]
+        return set(point for point in points if points.count(point) == shape.facesAtPoint)
 
-tetrahedron = Shape(4,3)
-cube = Shape(6,4)
-octahedron = Shape(8,3)
-dodecahedron = Shape(12,5)
-icosahedron = Shape(20,3)
+    for face in net:
+        if len(net) == shape.faces:
+            return net, pairs
+        else:
+            for i in range(shape.sides):
+                p1 = face[i - 1]
+                p2 = face[i]
+                if {p1, p2} not in pairs and p1 not in fullPoints and p2 not in fullPoints:
+                    newFace = [p1, p2]
+                    pairs.append(set(newFace))
+                    # Create remaining points around newFAce.
+                    for j in range(shape.sides - 2):
+                        newPoint = len(points)
+                        points.append(newPoint)
+                        newFace.append(newPoint)
+                    net.append(newFace)
+                    fullPoints = findFullPoints(net)
 
-# shapeFaces = {
-#     # 'name': number of faces
-#     't': 4,
-#     'c': 6,
-#     'o': 8,
-#     'd': 12,
-# }
+# Assuming that makeNet works:
+def formatNet(net: list[list[int]]) -> list[set[int, int]]:
+    '''Take net as input, return a list contining adjacent faces.'''
+    pass
 
-# shapeAdjFaces = {
-#     # 'name': number of adjacent faces for any given face
-#     't': 3,
-#     'c': 4,
-#     'o': 3,
-#     'd': 5,
-# }
+def findAdjFaces(pars: list[set[int, int]]) -> list[list[int]]:
+    '''Take a list of faces that are adjacent to each other, the same face
+can appear more than once in the list.  Return a new list of lists where
+its index is a face and the contents are the faces that are adjacent to
+the face.'''
+    pass
 
-# For a cube:
-# IDENTITY [0 1 2 3 4]
-# [1,2,4,5] # 0
-# [0,2,3,5] # 1
-# [0,1,3,4] # 2
-# [1,2,4,5] # 3
-# [0,2,3,5] # 4
-# [0,1,3,4] # 5
-
-# For a dodecahedron
-# IDENTITY [0 1 2 3 4 5]
-# 0 [1 2 3 4  5]
-# 1 [0 2 5 9  10]
-# 2 [0 1 3 10 11]
-# 3 [0 2 4 7  11]
-# 4 [0 3 5 7  8]
-# 5 [0 1 4 8  9]
-# 6 [7 8 9 10 11]
-# 7 [3 4 6 8 11]
-
-# def createFaces(s):
-#     faces = []
-#     for i in range(shapeFaces[s]):
-#         faces.append([])
-#     identity = list(range(1,shapeAdjFaces[s]+1))
-#     faces[0].append(identity)
-#     for i in range(1,int(shapeFaces[s]/2)):
-#         adjFaces = []
-#         for j in identity:
-#             adjFaces = [identity[i-1]] + [identity[i+1]] +
-
-#     return faces
-
-# print(createFaces('c'))
-# print(createFaces('d'))
+print('tetrahedron', makeNet(tetrahedron))
+print()
+print('cube', makeNet(cube))
+print()
+print('octahedron', makeNet(octahedron))
+print()
