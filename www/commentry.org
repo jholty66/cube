@@ -1,8 +1,38 @@
 * Representng puzzles computationally.
 
+Pieces can be divided into three different types: centers, edges and
+corners which show 1, 2 and 3 faces respectively.  A face on a 3x3x3 cube is labelled as:
+
+#+BEGIN_SRC text
+|--------+-------+--------|
+| corner | edge  | corner |
+|--------+-------+--------|
+| edge   | cener | edge   |
+|--------+-------+--------|
+| corner | edge  | corner |
+|--------+-------+--------|
+#+END_SRC
+
+For a 4x4x4:
+
+#+BEGIN_SRC text
+|--------+--------+--------+--------|
+| corner | edge   | edge   | corner |
+|--------+--------+--------+--------|
+| edge   | center | center | edge   |
+|--------+--------+--------+--------|
+| edge   | center | center | edge   |
+|--------+--------+--------+--------|
+| corner | edge   | edge   | corner |
+|--------+--------+--------+--------|
+#+END_SRC
+
+
+For on a 5x5x5:
+
 #+BEGIN_SRC text
 |--------+--------+--------+--------+--------|
-| corner | edge   | edge   | edge   | corenr |
+| corner | edge   | edge   | edge   | corner |
 |--------+--------+--------+--------+--------|
 | edge   | center | center | center | edge   |
 |--------+--------+--------+--------+--------|
@@ -14,7 +44,51 @@
 |--------+--------+--------+--------+--------|
 #+END_SRC
 
-# 2D arrary to represent adjacent faces
+The problem with this method is that there is not a way to uniquely
+identify the center and edge peices on higher order cubes, the corners
+can allways be uniquely identified.  Centers should only be in the
+center of a face and edges should only be in the middle of a face.  the
+edges of the puzzle. For a face of a 5x5x5:
+
+# #+BEGIN_SRC text
+|--------+--------+--------+--------+--------|
+| corner | corner | edge   | corner | corner |
+|--------+--------+--------+--------+--------|
+| corner | corner | edge   | corner | corner |
+|--------+--------+--------+--------+--------|
+| edge   | edge   | center | edge   | edge   |
+|--------+--------+--------+--------+--------|
+| corner | corner | edge   | corner | corner |
+|--------+--------+--------+--------+--------|
+| corner | corner | edge   | corner | corner |
+|--------+--------+--------+--------+--------|
+#+END_SRC
+
+And (strangely) for a 4x4x4:
+
+# #+BEGIN_SRC text
+|--------+--------+--------+--------|
+| corner | corner | corner | corner |
+|--------+--------+--------+--------|
+| corner | corner | corner | corner |
+|--------+--------+--------+--------|
+| corner | corner | corner | corner |
+|--------+--------+--------+--------|
+| corner | corner | corner | corner |
+|--------+--------+--------+--------|
+#+END_SRC
+
+The problem with this is that now corners don't allways show three faces
+and edges don't allways show two faces.
+
+Adding a depth to each piece allowing it to be uniquely searched for 1,
+2 or 3 face-depth pairs.
+
+** Find faces that are adjacent to each other.
+*** Create a net.
+The first idea was to create a data type that can store the names of a
+face with all other faces that touch it.
+
 However this method would not work on an icosahedron.
 
 An alternative approach to this wold be to create a net data structure
@@ -25,47 +99,78 @@ The /makeNet/ function, takes the number of sides and faces of a given
 shape and returns its net as a two dimensional arrary with each sub-arry
 being a face and each item a point that connects faces.
 
+The following is my first attempt for a procedure that would create a
+net of a given shape.  The output for a cube would be:
+
 #+BEGIN_SRC python
-def makeNet(faces: int, sides: int) -> list[list[int]]:
-    '''New faces that are added to net can't have points or share pairs
-of points that are in the previous two lists.  Adjacent points in the
-list are adjacent on the face.
+>>> [[0, 1, 2, 3], [3, 0, 4, 5], [0, 1, 6, 7], [1, 2, 8, 9], [2, 3, 10, 11], [4, 5, 12, 13]]
+#+END_SRC
+
+Each sublist would be a face, six sublists for six faces.  The items in
+each sublist name a point that lies on a face.  Points are recorded to
+cound the number of faces that meet at the point, three for a cube, so
+each point can only appear 3 times in the list.
+
+#+BEGIN_SRC python
+def makeNet(shape: Shape) -> tuple[list[list[int]], list[set[int]]]:
+    '''New faces that are added to net can't have points or share pairs of
+points that are in the previous two lists.  Adjacent points in the list
+are adjacent on the face.  Return the net and it pairs of of points that
+share two faces .
 
 When adding a new face, look for two adjacend points are not in
 fullPairs.  Add points n+1 and n+2 to the face and poitns where n is the
-nth point in points.  Repeat until all faces have been created.
-
-    '''
-    net = [list(range(sides))]
-    points = list(range(sides)) # List of points that are used by any of the faces.
-    fullPoints = []             # List of all points that are used by 3 faces.
-    pairs = []                  # List of sets of 2 points used by 2 faces.
-    # freeFaces = []  # List of faces that don't have another face attatched to each of its sides.
+nth point in points.  Repeat until all faces have been created.'''
+    net = [list(range(shape.sides))]  # The net is initially points that surround that first face.
+    points = list(range(shape.sides)) # List of points that are used by any of the faces.
+    fullPoints = []                   # List of all points that are used by 3 faces.
+    pairs = []                        # List of sets of 2 points used by 2 faces.
 
     def findFullPoints(net: list[list[int]]) -> list[int]:
+        '''Take the points in each face in the net. Return a set of all of those
+points.'''
         points = [point for shape in net for point in shape]
-        return set(point for point in points if points.count(point) == 3)
+        return set(point for point in points if points.count(point) == shape.facesAtPoint)
 
-    while len(net) < faces:
-        # print(0)
-        for face in net:
-            # print(1)
-            for i in range(len(face)):
-                # print(2)
-                p1 = face[i-1]
+    for face in net:
+        if len(net) == shape.faces:
+            return net, pairs
+        else:
+            for i in range(shape.sides):
+                p1 = face[i - 1]
                 p2 = face[i]
                 if {p1, p2} not in pairs and p1 not in fullPoints and p2 not in fullPoints:
-                    # print(3)j
-                    # Found valid pair of points.
-                    face = [p1,p2]
-                    pairs.append(set(face))
-                    for j in range(sides-2):
-                        # Two time for a cube.
-                        points.append(points[-1]+1)
-                        face.append(points[-1])
-                    net.append(face)
+                    newFace = [p1, p2]
+                    pairs.append(set(newFace))
+                    # Create remaining points around newFAce.
+                    for j in range(shape.sides - 2):
+                        newPoint = len(points)
+                        points.append(newPoint)
+                        newFace.append(newPoint)
+                    net.append(newFace)
                     fullPoints = findFullPoints(net)
-        print(len(net),faces)
-
-    return net
 #+END_SRC
+
+The procedure worked with tetrahedorns and cubes, but not with shapes
+with more faces as shown below.
+
+[[../images/new--1.png]]
+
+Note that for the dodecahedron points: (25, 26), (22, 29), (31, 26),
+(28, 35) and (37, 32) should be treaded as the same point when creating
+the net.  As extra points were created there were more then three faces
+that meet at a point, if this would to be folded as a dodecahedron.
+
+The solutions to this was to extend the number of faces that meet a
+point to the maximum number of ponts the a point can be connected to.
+For a dodecahedron (3 faces meet at a point), point must can connect to
+a maximum four other points.  For an octahedron, (4 faces must meet at a
+point), a point can connect to a maximum of 4 other points.
+
+
+
+* Full code:
+** =/src:=
+*** cube.py
+[[../python/cube.py]]
+** =/www:=

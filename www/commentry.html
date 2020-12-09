@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2020-12-06 Sun 19:46 -->
+<!-- 2020-12-09 Wed 20:38 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
@@ -245,16 +245,63 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org55fa7f6">1. Representng puzzles computationally.</a></li>
+<li><a href="#org08eca8f">1. Representng puzzles computationally.</a>
+<ul>
+<li><a href="#org7022a2c">1.1. Find faces that are adjacent to each other.</a></li>
+</ul>
+</li>
+<li><a href="#orge55fd30">2. Full code:</a>
+<ul>
+<li><a href="#orgcd9e5dc">2.1. <code>cube.py</code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org55fa7f6" class="outline-2">
-<h2 id="org55fa7f6"><span class="section-number-2">1</span> Representng puzzles computationally.</h2>
+<div id="outline-container-org08eca8f" class="outline-2">
+<h2 id="org08eca8f"><span class="section-number-2">1</span> Representng puzzles computationally.</h2>
 <div class="outline-text-2" id="text-1">
+<p>
+Pieces can be divided into three different types: centers, edges and
+corners which show 1, 2 and 3 faces respectively.  A face on a 3x3x3 cube is labelled as:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text">|--------+-------+--------|
+| corner | edge  | corner |
+|--------+-------+--------|
+| edge   | cener | edge   |
+|--------+-------+--------|
+| corner | edge  | corner |
+|--------+-------+--------|
+</pre>
+</div>
+
+<p>
+For a 4x4x4:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text">|--------+--------+--------+--------|
+| corner | edge   | edge   | corner |
+|--------+--------+--------+--------|
+| edge   | center | center | edge   |
+|--------+--------+--------+--------|
+| edge   | center | center | edge   |
+|--------+--------+--------+--------|
+| corner | edge   | edge   | corner |
+|--------+--------+--------+--------|
+</pre>
+</div>
+
+
+<p>
+For on a 5x5x5:
+</p>
+
 <div class="org-src-container">
 <pre class="src src-text">|--------+--------+--------+--------+--------|
-| corner | edge   | edge   | edge   | corenr |
+| corner | edge   | edge   | edge   | corner |
 |--------+--------+--------+--------+--------|
 | edge   | center | center | center | edge   |
 |--------+--------+--------+--------+--------|
@@ -266,6 +313,150 @@ for the JavaScript code in this tag.
 |--------+--------+--------+--------+--------|
 </pre>
 </div>
+
+<p>
+The problem with this method is that there is not a way to uniquely
+identify the center and edge peices on higher order cubes, the corners
+can allways be uniquely identified.  Centers should only be in the
+center of a face and edges should only be in the middle of a face.  the
+edges of the puzzle. For a face of a 5x5x5:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">corner</th>
+<th scope="col" class="org-left">corner</th>
+<th scope="col" class="org-left">edge</th>
+<th scope="col" class="org-left">corner</th>
+<th scope="col" class="org-left">corner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">edge</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">edge</td>
+<td class="org-left">edge</td>
+<td class="org-left">center</td>
+<td class="org-left">edge</td>
+<td class="org-left">edge</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">edge</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">edge</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+</tr>
+</tbody>
+</table>
+<p>
+#+END<sub>SRC</sub>
+</p>
+
+<p>
+And (strangely) for a 4x4x4:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">corner</th>
+<th scope="col" class="org-left">corner</th>
+<th scope="col" class="org-left">corner</th>
+<th scope="col" class="org-left">corner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+<td class="org-left">corner</td>
+</tr>
+</tbody>
+</table>
+<p>
+#+END<sub>SRC</sub>
+</p>
+
+<p>
+The problem with this is that now corners don't allways show three faces
+and edges don't allways show two faces.
+</p>
+
+<p>
+Adding a depth to each piece allowing it to be uniquely searched for 1,
+2 or 3 face-depth pairs.
+</p>
+</div>
+
+<div id="outline-container-org7022a2c" class="outline-3">
+<h3 id="org7022a2c"><span class="section-number-3">1.1</span> Find faces that are adjacent to each other.</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+The first idea was to create a data type that can store the names of a
+face with all other faces that touch it.
+</p>
 
 <p>
 However this method would not work on an icosahedron.
@@ -283,56 +474,100 @@ shape and returns its net as a two dimensional arrary with each sub-arry
 being a face and each item a point that connects faces.
 </p>
 
+<p>
+The following is my first attempt for a procedure that would create a
+net of a given shape.  The output for a cube would be:
+</p>
+
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #5317ac;">def</span> <span style="color: #721045;">makeNet</span>(faces: <span style="color: #8f0075;">int</span>, sides: <span style="color: #8f0075;">int</span>) -&gt; <span style="color: #8f0075;">list</span>[<span style="color: #8f0075;">list</span>[<span style="color: #8f0075;">int</span>]]:
-    <span style="color: #2a486a;">'''New faces that are added to net can't have points or share pairs</span>
-<span style="color: #2a486a;">of points that are in the previous two lists.  Adjacent points in the</span>
-<span style="color: #2a486a;">list are adjacent on the face.</span>
-
-<span style="color: #2a486a;">When adding a new face, look for two adjacend points are not in</span>
-<span style="color: #2a486a;">fullPairs.  Add points n+1 and n+2 to the face and poitns where n is the</span>
-<span style="color: #2a486a;">nth point in points.  Repeat until all faces have been created.</span>
-
-<span style="color: #2a486a;">    '''</span>
-    <span style="color: #00538b;">net</span> = [<span style="color: #8f0075;">list</span>(<span style="color: #8f0075;">range</span>(sides))]
-    <span style="color: #00538b;">points</span> = <span style="color: #8f0075;">list</span>(<span style="color: #8f0075;">range</span>(sides)) <span style="color: #505050;"># </span><span style="color: #505050;">List of points that are used by any of the faces.</span>
-    <span style="color: #00538b;">fullPoints</span> = []             <span style="color: #505050;"># </span><span style="color: #505050;">List of all points that are used by 3 faces.</span>
-    <span style="color: #00538b;">pairs</span> = []                  <span style="color: #505050;"># </span><span style="color: #505050;">List of sets of 2 points used by 2 faces.</span>
-    <span style="color: #505050;"># </span><span style="color: #505050;">freeFaces = []  # List of faces that don't have another face attatched to each of its sides.</span>
-
-    <span style="color: #5317ac;">def</span> <span style="color: #721045;">findFullPoints</span>(net: <span style="color: #8f0075;">list</span>[<span style="color: #8f0075;">list</span>[<span style="color: #8f0075;">int</span>]]) -&gt; <span style="color: #8f0075;">list</span>[<span style="color: #8f0075;">int</span>]:
-        <span style="color: #00538b;">points</span> = [point <span style="color: #5317ac;">for</span> shape <span style="color: #5317ac;">in</span> net <span style="color: #5317ac;">for</span> point <span style="color: #5317ac;">in</span> shape]
-        <span style="color: #5317ac;">return</span> <span style="color: #8f0075;">set</span>(point <span style="color: #5317ac;">for</span> point <span style="color: #5317ac;">in</span> points <span style="color: #5317ac;">if</span> points.count(point) == 3)
-
-    <span style="color: #5317ac;">while</span> <span style="color: #8f0075;">len</span>(net) &lt; faces:
-        <span style="color: #505050;"># </span><span style="color: #505050;">print(0)</span>
-        <span style="color: #5317ac;">for</span> face <span style="color: #5317ac;">in</span> net:
-            <span style="color: #505050;"># </span><span style="color: #505050;">print(1)</span>
-            <span style="color: #5317ac;">for</span> i <span style="color: #5317ac;">in</span> <span style="color: #8f0075;">range</span>(<span style="color: #8f0075;">len</span>(face)):
-                <span style="color: #505050;"># </span><span style="color: #505050;">print(2)</span>
-                <span style="color: #00538b;">p1</span> = face[i-1]
-                <span style="color: #00538b;">p2</span> = face[i]
-                <span style="color: #5317ac;">if</span> {p1, p2} <span style="color: #5317ac;">not</span> <span style="color: #5317ac;">in</span> pairs <span style="color: #5317ac;">and</span> p1 <span style="color: #5317ac;">not</span> <span style="color: #5317ac;">in</span> fullPoints <span style="color: #5317ac;">and</span> p2 <span style="color: #5317ac;">not</span> <span style="color: #5317ac;">in</span> fullPoints:
-                    <span style="color: #505050;"># </span><span style="color: #505050;">print(3)j</span>
-                    <span style="color: #505050;"># </span><span style="color: #505050;">Found valid pair of points.</span>
-                    <span style="color: #00538b;">face</span> = [p1,p2]
-                    pairs.append(<span style="color: #8f0075;">set</span>(face))
-                    <span style="color: #5317ac;">for</span> j <span style="color: #5317ac;">in</span> <span style="color: #8f0075;">range</span>(sides-2):
-                        <span style="color: #505050;"># </span><span style="color: #505050;">Two time for a cube.</span>
-                        points.append(points[-1]+1)
-                        face.append(points[-1])
-                    net.append(face)
-                    <span style="color: #00538b;">fullPoints</span> = findFullPoints(net)
-        <span style="color: #5317ac;">print</span>(<span style="color: #8f0075;">len</span>(net),faces)
-
-    <span style="color: #5317ac;">return</span> net
+<pre class="src src-python">&gt;&gt;&gt; [[0, 1, 2, 3], [3, 0, 4, 5], [0, 1, 6, 7], [1, 2, 8, 9], [2, 3, 10, 11], [4, 5, 12, 13]]
 </pre>
+</div>
+
+<p>
+Each sublist would be a face, six sublists for six faces.  The items in
+each sublist name a point that lies on a face.  Points are recorded to
+cound the number of faces that meet at the point, three for a cube, so
+each point can only appear 3 times in the list.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5f3f7f;">def</span> <span style="color: #752f50;">makeNet</span>(shape: Shape) -&gt; <span style="color: #702565;">tuple</span>[<span style="color: #702565;">list</span>[<span style="color: #702565;">list</span>[<span style="color: #702565;">int</span>]], <span style="color: #702565;">list</span>[<span style="color: #702565;">set</span>[<span style="color: #702565;">int</span>]]]:
+    <span style="color: #2e584f;">'''New faces that are added to net can't have points or share pairs of</span>
+<span style="color: #2e584f;">points that are in the previous two lists.  Adjacent points in the list</span>
+<span style="color: #2e584f;">are adjacent on the face.  Return the net and it pairs of of points that</span>
+<span style="color: #2e584f;">share two faces .</span>
+
+<span style="color: #2e584f;">When adding a new face, look for two adjacend points are not in</span>
+<span style="color: #2e584f;">fullPairs.  Add points n+1 and n+2 to the face and poitns where n is the</span>
+<span style="color: #2e584f;">nth point in points.  Repeat until all faces have been created.'''</span>
+    <span style="color: #12506f;">net</span> = [<span style="color: #702565;">list</span>(<span style="color: #702565;">range</span>(shape.sides))]  <span style="color: #505050;"># </span><span style="color: #505050;">The net is initially points that surround that first face.</span>
+    <span style="color: #12506f;">points</span> = <span style="color: #702565;">list</span>(<span style="color: #702565;">range</span>(shape.sides)) <span style="color: #505050;"># </span><span style="color: #505050;">List of points that are used by any of the faces.</span>
+    <span style="color: #12506f;">fullPoints</span> = []                   <span style="color: #505050;"># </span><span style="color: #505050;">List of all points that are used by 3 faces.</span>
+    <span style="color: #12506f;">pairs</span> = []                        <span style="color: #505050;"># </span><span style="color: #505050;">List of sets of 2 points used by 2 faces.</span>
+
+    <span style="color: #5f3f7f;">def</span> <span style="color: #752f50;">findFullPoints</span>(net: <span style="color: #702565;">list</span>[<span style="color: #702565;">list</span>[<span style="color: #702565;">int</span>]]) -&gt; <span style="color: #702565;">list</span>[<span style="color: #702565;">int</span>]:
+        <span style="color: #2e584f;">'''Take the points in each face in the net. Return a set of all of those</span>
+<span style="color: #2e584f;">points.'''</span>
+        <span style="color: #12506f;">points</span> = [point <span style="color: #5f3f7f;">for</span> shape <span style="color: #5f3f7f;">in</span> net <span style="color: #5f3f7f;">for</span> point <span style="color: #5f3f7f;">in</span> shape]
+        <span style="color: #5f3f7f;">return</span> <span style="color: #702565;">set</span>(point <span style="color: #5f3f7f;">for</span> point <span style="color: #5f3f7f;">in</span> points <span style="color: #5f3f7f;">if</span> points.count(point) == shape.facesAtPoint)
+
+    <span style="color: #5f3f7f;">for</span> face <span style="color: #5f3f7f;">in</span> net:
+        <span style="color: #5f3f7f;">if</span> <span style="color: #702565;">len</span>(net) == shape.faces:
+            <span style="color: #5f3f7f;">return</span> net, pairs
+        <span style="color: #5f3f7f;">else</span>:
+            <span style="color: #5f3f7f;">for</span> i <span style="color: #5f3f7f;">in</span> <span style="color: #702565;">range</span>(shape.sides):
+                <span style="color: #12506f;">p1</span> = face[i - 1]
+                <span style="color: #12506f;">p2</span> = face[i]
+                <span style="color: #5f3f7f;">if</span> {p1, p2} <span style="color: #5f3f7f;">not</span> <span style="color: #5f3f7f;">in</span> pairs <span style="color: #5f3f7f;">and</span> p1 <span style="color: #5f3f7f;">not</span> <span style="color: #5f3f7f;">in</span> fullPoints <span style="color: #5f3f7f;">and</span> p2 <span style="color: #5f3f7f;">not</span> <span style="color: #5f3f7f;">in</span> fullPoints:
+                    <span style="color: #12506f;">newFace</span> = [p1, p2]
+                    pairs.append(<span style="color: #702565;">set</span>(newFace))
+                    <span style="color: #505050;"># </span><span style="color: #505050;">Create remaining points around newFAce.</span>
+                    <span style="color: #5f3f7f;">for</span> j <span style="color: #5f3f7f;">in</span> <span style="color: #702565;">range</span>(shape.sides - 2):
+                        <span style="color: #12506f;">newPoint</span> = <span style="color: #702565;">len</span>(points)
+                        points.append(newPoint)
+                        newFace.append(newPoint)
+                    net.append(newFace)
+                    <span style="color: #12506f;">fullPoints</span> = findFullPoints(net)
+</pre>
+</div>
+
+<p>
+The procedure worked with tetrahedorns and cubes, but not with shapes
+with more faces as shown below.
+</p>
+
+
+<div class="figure">
+<p><img src="../images/new--1.png" alt="new--1.png" />
+</p>
+</div>
+
+<p>
+Note that for the dodecahedron points: (25, 26), (22, 29), (31, 26),
+(28, 35) and (37, 32) should be treaded as the same point when creating
+the net.  As extra points were created there were more then three faces
+that meet at a point, if this would to be folded as a dodecahedron.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge55fd30" class="outline-2">
+<h2 id="orge55fd30"><span class="section-number-2">2</span> Full code:</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgcd9e5dc" class="outline-3">
+<h3 id="orgcd9e5dc"><span class="section-number-3">2.1</span> <code>cube.py</code></h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+<a href="../python/cube.py">../python/cube.py</a></p>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2020-12-06 Sun 19:46</p>
+<p class="date">Created: 2020-12-09 Wed 20:38</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
