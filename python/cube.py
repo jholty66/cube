@@ -1,22 +1,6 @@
 #!/usr/bin/python3
 
-# class Piece:
-#     faces: set[int]
-
-#     def __init__(*positions: tuple[int, int]):
-#         pass
-
-#     def getFaces():
-#         pass
-
-# class Center(Piece):
-#     pass
-
-# class Edge(Piece):
-#     pass
-
-# class Corner(Piece):
-#     pass
+print('----------------------------------------------------------------')
 
 class Shape:
     def __init__(self,faces,sides,facesAtPoint):
@@ -24,6 +8,7 @@ class Shape:
         self.sides = sides
         self.facesAtPoint = facesAtPoint
         self.faceList = list(range(faces))
+        self.colourScheme: list[str]
 
 tetrahedron  = Shape(4,3,3)
 cube         = Shape(6,4,3)
@@ -41,13 +26,12 @@ share two faces .
 When adding a new face, look for two adjacend points are not in
 fullPairs.  Add points n+1 and n+2 to the face and poitns where n is the
 nth point in points.  Repeat until all faces have been created.'''
-
     face = list(range(shape.sides))
-    net = [face]                                   # The net is initially points that surround that first face.
-    points = list(range(shape.sides))              # List of points that are used by any of the faces.
-    pairs = set({face[i],face[i-1]} for i in face) # List of the pair of points on each end of an edge.
-    fullPairs = []                                 # List of sets of 2 points used by 2 faces, no other shape can be added with these two points..
-    fullPoints = []                                # List of all points that are used by 3 faces or that are connected to FACESATPOINT other points.
+    net = [face]                                   # Net initially contains the first face.
+    points = list(range(shape.sides))
+    pairs = [{face[i], face[i - 1]} for i in face] # Pairs of vertices joined by an edge.
+    fullPairs = []                                 # Pairs of vertices shared by two shapes.
+    fullPoints = []                                # Vetices that are connected to FACESATPOINT other points or faces.
 
     def findFullPoints(net: list[list[int]]) -> list[int]:
         '''Take the points in each face in the net. Return a set of all of those
@@ -57,21 +41,23 @@ points.'''
         return set(point for point in points if points.count(point) == shape.facesAtPoint or connections.count(point) == shape.facesAtPoint)
 
     for face in net:
-        # print(net)
         if len(net) == shape.faces:
-            return net, pairs
+            print(pairs)
+            print()
+            return net #, pairs
         else:
             for i in range(shape.sides):
                 p1 = face[i - 1]
                 p2 = face[i]
-                if {p1, p2} not in pairs and p1 not in fullPoints and p2 not in fullPoints:
-                    newFace = [p1, p2]
-                    pairs.append(set(newFace))
-                    # Create remaining points around newFAce.
-                    for j in range(shape.sides - 2):
-                        newPoint = len(points)
-                        points.append(newPoint)
-                        newFace.append(newPoint)
+                if {p1, p2} not in fullPairs and p1 not in fullPoints and p2 not in fullPoints:
+                    fullPairs.append({p1, p2})
+                    newPoints = [len(points) + j for j in range(shape.sides - 2)]
+                    points += newPoints
+                    newFace = [p1, p2] + newPoints
+                    for j in range(len(newFace)):
+                        pair = {newFace[j - 1], newFace[j]}
+                        if pair not in pairs:
+                            pairs.append(pair)
                     net.append(newFace)
                     fullPoints = findFullPoints(net)
 
@@ -87,4 +73,4 @@ its index is a face and the contents are the faces that are adjacent to
 the face.'''
     pass
 
-print('dodecahedron', makeNet(dodecahedron))
+print(makeNet(dodecahedron))

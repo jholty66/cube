@@ -99,6 +99,11 @@ The /makeNet/ function, takes the number of sides and faces of a given
 shape and returns its net as a two dimensional arrary with each sub-arry
 being a face and each item a point that connects faces.
 
+The best way I found to figure out how the algorithm would to create a
+net for a given shape was to methodically draw a net step by step on
+paper. Then write the procudure using the steps and then draw the net
+that was outputted.
+
 The following is my first attempt for a procedure that would create a
 net of a given shape.  The output for a cube would be:
 
@@ -173,4 +178,6 @@ point), a point can connect to a maximum of 4 other points.
 ** =/src:=
 *** cube.py
 [[../python/cube.py]]
+
+#+INCLUDE: "../python/cube.py" src python
 ** =/www:=
