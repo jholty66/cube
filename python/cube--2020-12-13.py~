@@ -27,8 +27,8 @@ When adding a new face, look for two adjacend points are not in
 fullPairs.  Add points n+1 and n+2 to the face and poitns where n is the
 nth point in points.  Repeat until all faces have been created.'''
     face = list(range(shape.sides))
-    net = [face]                                   # Net initially contains the first face.
-    points = list(range(shape.sides))
+    net = [face[:]]                                # Net initially contains the first face.
+    points = face[:]
     pairs = [{face[i], face[i - 1]} for i in face] # Pairs of vertices joined by an edge.
     fullPairs = []                                 # Pairs of vertices shared by two shapes.
     fullPoints = []                                # Vetices that are connected to FACESATPOINT other points or faces.
@@ -38,7 +38,7 @@ nth point in points.  Repeat until all faces have been created.'''
 points.'''
         points = [point for shape in net for point in shape]
         connections = [point for pair in pairs for point in pairs]
-        return set(point for point in points if points.count(point) == shape.facesAtPoint or connections.count(point) == shape.facesAtPoint)
+        return set(point for point in points if (points.count(point) or connections.count(point)) == shape.facesAtPoint)
 
     for face in net:
         if len(net) == shape.faces:
@@ -49,7 +49,7 @@ points.'''
             for i in range(shape.sides):
                 p1 = face[i - 1]
                 p2 = face[i]
-                if {p1, p2} not in fullPairs and p1 not in fullPoints and p2 not in fullPoints:
+                if ({p1, p2} not in fullPairs) and ((p1 and p2) not in fullPoints):
                     fullPairs.append({p1, p2})
                     newPoints = [len(points) + j for j in range(shape.sides - 2)]
                     points += newPoints
@@ -73,4 +73,6 @@ its index is a face and the contents are the faces that are adjacent to
 the face.'''
     pass
 
-print(makeNet(dodecahedron))
+# print(makeNet(dodecahedron))
+
+NET(dodecahedron)
