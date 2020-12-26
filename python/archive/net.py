@@ -17,9 +17,16 @@ dodecahedron = Shape(12,5,3)
 icosahedron  = Shape(20,3,5)
 
 def makeNet(shape: Shape):
-    face1: list[int] = list(range(shape.sides))
-    edges: list[set[int]] = [{face1[i - 1], face1[i + 1]} for i in range(shape.sides)]
-    pass
+    face = list(range(shape.sides))
+    net = [face[:]]
+    corners = [corner for face in net for corner in face]
+    completeCorners = []
+
+    for corner in corners:
+        if corner not in completeCorners:
+            if corners.count(corner) == shape.facesAtPoint - 1:
+
+
 
 # Assuming that makeNet works:
 def formatNet(net: list[list[int]]) -> list[set[int, int]]:

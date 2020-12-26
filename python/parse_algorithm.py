@@ -34,7 +34,9 @@ returns a list readable by the solver.'''
         for i in range(len(alg)):
             if alg[i][0] not in '1234567890':
                 alg[i] = '1' + alg[i]
-        print(f'{alg}\n')
+        for move in alg:
+            print(move)
+        print()
         for move in alg:
             dir = move[1:]
             # Only letters.
@@ -60,5 +62,5 @@ returns a list readable by the solver.'''
             else:
                 c = 2
             for _ in r:
-                new_alg.append((dir[0:c], move[0]))
+                new_alg.append((dir[0:c], int(move[0])))
         return new_alg
