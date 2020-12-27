@@ -3,42 +3,22 @@
 from typing import *
 
 class Sticker:
-    def __init__(self, pos: int, depth: int):
-        self.colour = pos # self.colour is immutable
+    def __init__(self, colour: int, pos: int, depth: int):
+        self.colour = colour
         self.pos = pos
-        self.depth = depth
+        self.depth =depth
 
 class Solid:
-    def spawn_centers(self) -> List[List[Sticker]]:
-        return [[Sticker(i, 1)] for i in range(len(self.adjMat))] if self.order % 2 == 1 else []
-
-    def spawn_edges(self) -> List[List[Sticker]]:
-        if self.order % 2 == 1:
-            edges: List[List[Sticker]] = []
-            for i in range(len(self.adjMat)):
-                for j in range(len(self.adjMat[i])):
-                    for depth1 in range(1, int((self.order + 1) / 2)):
-                        for depth2 in range(1, int((self.order + 1) / 2)):
-                            if 1 == (depth1 or depth2):
-                                edge = [Sticker(i,depth1), Sticker(self.adjMat[i][j], depth2)]
-                                if set(s.pos for s in edge) not in [set(S.pos for S in e) for e in edges]:
-                                    edges.append(edge)
-            return edges
-        else:
-            return []
-
-    def spawn_corners(self) -> List[List[Sticker]]:
-        corners: List[List[Sticker]] = []
+    def spawn_cubies(self):
+        '''A cube is a piece that makes up a puzzle. Centers, corners
+and edges are cubies.'''
+        cubies = []
+        # Test for a 2x2.
         for i in range(len(self.adjMat)):
             for j in range(len(self.adjMat[i])):
-                for depth1 in range(1 , int(self.order / 2) + 1):
-                    for depth2 in range(1 , int(self.order / 2) + 1):
-                        for depth3 in range(1 , int(self.order / 2) + 1):
-                            if 1 == (depth1 or depth2 or depth3) :
-                                corner = [Sticker(i,depth1), Sticker(self.adjMat[i][j - 1], depth2), Sticker(self.adjMat[i][j], depth3)]
-                                if set(s.pos for s in corner) not in [set(S.pos for S in c) for c in corners]:
-                                    corners.append(corner)
-        return corners
+                cubie = Sticker(i, i, 1)
+                if cubie not in cubies:
+                    cubies.append(cubie)
 
     def __init__(self, order: int, sides: int, faces: int, adjMat: List[List[int]]):
         self.order = order
@@ -70,15 +50,6 @@ class Solid:
 
     def scramble(self):
         pass
-
-    def show_centers(self):
-        print([center.pos for center in self.centers])
-
-    def show_edges(self):
-        print([edge.pos for edge in self.edges])
-
-    def show_corners(self):
-        print([corner.pos for corner in self.corners])
 
 class Tetrahedron(Solid):
     def __init__(self, order: int):
@@ -115,7 +86,7 @@ class Cube(Solid):
        5: 'FFFF00:'
     }
 
-    def show_cube(self):
+    def show(self):
         '''
     uuu
     uuu
@@ -203,12 +174,15 @@ class Icosahedron(Solid):
                       [15,18,2]]  # 19
         )
 
-pzl = Cube(7)
-[print([s.pos for s in center]) for center in pzl.centers]
+pzl = Cube(6)
+[print(list(center.values())) for center in pzl.centers]
 print()
-[print([s.pos for s in edge]) for edge in pzl.edges]
+[print(list(edge.values())) for edge in pzl.edges]
 print()
-[print([s.pos for s in corner]) for corner in pzl.corners]
+[print(list(corner.values())) for corner in pzl.corners]
 print()
-print(len(pzl.centers), len(pzl.edges), len(pzl.corners))
+print(pzl.centers)
 print()
+print(pzl.edges)
+print()
+print(pzl.corners)
