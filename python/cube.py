@@ -100,26 +100,25 @@ class Solid:
 
         return corners
 
-    def findOppFaces(self):
-        op = dict()
+    def find_opp_faces(self):
+        opp_faces = dict()
         for i in range(self.faces):
-            ff = [i]
+            adj_faces = [i]
             for j in ff:
                 for k in self.adjMat[j]:
-                    if k not in ff:
-                        ff.append(k)
+                    if k not in adj_faces:
+                        adj_faces.append(k)
                 if len(ff) == len(self.adjMat) - 1:
-                    d = [f for f in range(self.faces) if f not in ff]
-                    op[i] = d[0]
+                    op[i] = [face for face in range(self.faces) if face not in adj_faces][0]
                     break
-        return op
+        return opp_faces
     
     def __init__(self, order: int, adjMat: List[List[int]]):
         self.order = order
         self.adjMat = adjMat
         self.faces = len(adjMat)
         self.sides = len(adjMat[0])
-        self.oppDict = self.findOppFaces()
+        self.oppDict = self.find_opp_faces()
         self.centers = self.spawn_centers()
         self.edges = self.spawn_edges()
         self.corners = self.spawn_corners()
