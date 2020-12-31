@@ -6,8 +6,8 @@ Test the turn function to see that it works on all puzzles.
 
 Function to scramble cube.  Later make scrambles WCA legal.
 
-(Maybe) function to display cube as plaintext. Faster to check
-functions that change state of cube.
+(Maybe) function to display cube as plaintext. Faster to check functions
+that change state of cube.
 
 Search for 3D graphics librarty to display shapes.
 
@@ -118,24 +118,25 @@ class Solid:
         self.pieces = self.centers
 
     def alg_format(self, alg: str, style: str) -> List[Move]:
-        '''Converts an algorithm string with moves seperated by spaces in
-either WCA, SigN or prefix format and return a list of moves as strings
-in modified prefix format.
+        '''Converts an algorithm string with moves seperated by spaces in either
+WCA, SigN or prefix format and return a list of moves as strings in
+modified prefix format.
 
 In the modified format, there are no brackets, wide moves and all moves
 state how many ayers they turn, not just wide moves, even for small
 puzzles like 3x3x3.'''
         # If brackers have a number at the end, expand the brackets, and
-        # remove them. Eg "(R U R' U')2" expands to "R U R' U' R U R' U'"
-        # Split the alg into strings with backs and strings with brackets.
-        # Expand the brackets on items with brackets.  Join the strings.
+        # remove them. Eg "(R U R' U')2" expands to "R U R' U' R U R'
+        # U'" Split the alg into strings with backs and strings with
+        # brackets.  Expand the brackets on items with brackets.  Join
+        # the strings.
         print(alg, ': alg')
         split_alg = re.split(r'(\(.*\)[0-9])', alg)
         print(split_alg, ': split_alg')
         for i in range(len(split_alg)):
             if re.match(r'\(|\)', split_alg[i]):
-                # Brackets only need to be expanded if the last character is a
-                # number.
+                # Brackets only need to be expanded if the last
+                # character is a number.
                 if split_alg[i][-1] in '1234567890':
                     count = int(split_alg[i][-1])
                     # Replace number with space
