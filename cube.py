@@ -73,26 +73,26 @@ class Solid:
     def spawn_edges(self) -> List[Edge]:
         edges: List[Edge] = []
         if self.order % 2 == 1:
-            for i in range(len(self.adjMat)):
-                for j in range(len(self.adjMat[i])):
+            for i in range(len(self.adj_mat)):
+                for j in range(len(self.adj_mat[i])):
                     for d1 in range(1, int((self.order + 1) / 2)):
                         for d2 in range(1, int((self.order + 1) / 2)):
                             for d3 in range(1, int((self.order + 1) / 2)):
                                 if 1 in (d1, d2):
-                                    edge = Edge(Sticker(i, d1), Sticker(self.adjMat[i][j], d2))
+                                    edge = Edge(Sticker(i, d1), Sticker(self.adj_mat[i][j], d2))
                                     if [set(edge.pos()), edge.depth()] not in [[EDGE.pos, EDGE.depth] for EDGE in edges]:
                                         edges.append(edge)
         return edges
 
     def spawn_corners(self) -> List[Corner]:
         corners: List[Corner] = []
-        for i in range(len(self.adjMat)):
-            for j in range(len(self.adjMat[i])):
+        for i in range(len(self.adj_mat)):
+            for j in range(len(self.adj_mat[i])):
                 for d1 in range(1, int(self.order / 2) + 1):
                     for d2 in range(1, int(self.order / 2) + 1):
                         for d3 in range(1, int(self.order / 2) + 1):
                             if 1 in (d1, d2, d3):
-                                corner = Corner(Sticker(i, d1), Sticker(self.adjMat[i][j - 1], d2), Sticker(self.adjMat[i][j], d3))
+                                corner = Corner(Sticker(i, d1), Sticker(self.adj_mat[i][j - 1], d2), Sticker(self.adj_mat[i][j], d3))
                                 if [set(corner.pos()), corner.depth()] not in [[CORNER.pos, CORNER.depth] for CORNER in corners]:
                                     corners.append(corner)
 
@@ -102,20 +102,20 @@ class Solid:
         opp_faces = dict()
         for i in range(self.faces):
             adj_faces = [i]
-            for j in ff:
-                for k in self.adjMat[j]:
+            for j in adj_faces:
+                for k in self.adj_mat[j]:
                     if k not in adj_faces:
                         adj_faces.append(k)
-                if len(ff) == len(self.adjMat) - 1:
+                if len(adj_faces) == len(self.adj_mat) - 1:
                     op[i] = [face for face in range(self.faces) if face not in adj_faces][0]
                     break
         return opp_faces
-    
-    def __init__(self, order: int, adjMat: List[List[int]]):
+
+    def __init__(self, order: int, adj_mat: List[List[int]]):
         self.order = order
-        self.adjMat = adjMat
-        self.faces = len(adjMat)
-        self.sides = len(adjMat[0])
+        self.adj_mat = adj_mat
+        self.faces = len(adj_mat)
+        self.sides = len(adj_mat[0])
         self.oppDict = self.find_opp_faces()
         self.centers = self.spawn_centers()
         self.edges = self.spawn_edges()
@@ -178,7 +178,7 @@ puzzles like 3x3x3.'''
             if prefix_alg[i] not in '1234567890':
                 prefix_alg[i] = '1' + prefix_alg[i]
         print(prefix_alg, ': prefix_alg')
-        # Change double moves and prime moves to single moves. 
+        # Change double moves and prime moves to single moves.
         # For a dodecahedron: U2' -> U U U.
         format_alg = []
         for move in prefix_alg:
@@ -211,7 +211,7 @@ puzzles like 3x3x3.'''
         def alg_show(self, alg: List[str], type: Callable[[List[str]], str]) -> str:
             '''Show internal representation of alg in type format.'''
             pass
-    
+
         def alg_exec(self, alg: List[Tuple[str, int]]):
             # U 0
             # F 1
@@ -250,9 +250,9 @@ puzzles like 3x3x3.'''
 
     def scramble(self):
         moves = 'RBUDLR'
-        r = range(shape.sides - 1)
-        for _ in range(len(shape.pieces)):
-            exec_move((random.choice(r), random.choice(moves), random.choice(r)))
+        r = range(self.sides - 1)
+        for _ in range(len(self.pieces)):
+            self.alg_exec((random.choice(r), random.choice(moves), random.choice(r)))
 
     def __show_pieces(self, pieces):
         print([piece.show for piece in pieces])
@@ -280,7 +280,7 @@ class Tetrahedron(Solid):
     def __init__(self, order: int):
         super().__init__(
             order = order,
-            adjMat = [[1,2,3], # 0
+            adj_mat = [[1,2,3], # 0
                       [0,3,2], # 1
                       [0,1,3], # 2
                       [0,2,1]] # 3
@@ -295,7 +295,7 @@ class Cube(Solid):
     def __init__(self, order: int):
         super().__init__(
             order = order,
-            adjMat = [[1,2,3,4], # 0
+            adj_mat = [[1,2,3,4], # 0
                       [2,0,4,5], # 1
                       [3,0,1,5], # 2
                       [4,0,2,5], # 3
@@ -340,7 +340,7 @@ class Octahedron(Solid):
     def __init__(self, order: int):
         super().__init__(
             order = order,
-            adjMat = [[1,2,3], # 0
+            adj_mat = [[1,2,3], # 0
                       [0,4,6], # 1
                       [0,6,5], # 2
                       [0,5,4], # 3
@@ -354,7 +354,7 @@ class Dodecahedron(Solid):
     def __init__(self, order: int):
         super().__init__(
             order = order,
-            adjMat = [[1,2,3,4,5],   # 0
+            adj_mat = [[1,2,3,4,5],   # 0
                       [0,5,6,7,2],   # 1
                       [0,1,7,8,3],   # 2
                       [0,2,8,9,4],   # 3
@@ -372,7 +372,7 @@ class Icosahedron(Solid):
     def __init__(self, order: int):
         super().__init__(
             order = order,
-            adjMat = [[1,3,18],   # 0
+            adj_mat = [[1,3,18],   # 0
                       [5,0,17],   # 1
                       [3,6,19],   # 2
                       [0,4,2],    # 3
