@@ -4,11 +4,6 @@
 TODO:
 Test the turn function to see that it works on all puzzles.
 
-Function to check weather a face is solved.  Do this by looking at
-(for example) all stickers with value 0 and check that they all share
-the same colour.  Then extend this to check all faces to know weather
-the puzzle is solved.
-
 Function to scramble cube.  Later make scrambles WCA legal.
 
 (Maybe) function to display cube as plaintext. Faster to check
