@@ -118,61 +118,29 @@ class Solid:
     # Algorihtms functions.
     # The following procedures shwo left blank to as they are local to objects
     # of the cube class.
+
     # Face turn.
-    def U(self):
-        pass
-
-    def F(self):
-        pass
-
-    def R(self):
-        pass
-
-    def BR(self):
-        pass
-
-    def B(self):
-        pass
-
-    def BL(self):
-        pass
-
-    def L(self):
-        pass
-
-    def DL(self):
-        pass
-
-    def D(self):
-        pass
-
-    def DR(self):
+    def __face_turn(self):
         pass
 
     # Slice.
-    def M(self):
-        pass
-
-    def S(self):
-        pass
-
-    def E(self):
+    def __slice(self):
         pass
 
     # Rotation.
-    def x(self):
+    def __x(self):
         pass
 
-    def y(self):
+    def __y(self):
         pass
 
-    def z(self):
+    def __z(self):
         pass
 
     def alg_format(self, alg: str) -> List[Move]:
-        '''Converts an algorithm string with moves seperated by spaces in either WCA, SigN
-or prefix format and return a list of moves as strings in modified prefix
-format.
+        '''Converts an algorithm string with moves seperated by spaces in
+either WCA, SigN or prefix format and return a list of moves as strings in
+modified prefix format.
 
 In the modified format, there are no brackets, wide moves and all moves state
 how many ayers they turn, not just wide moves, even for small puzzles like
@@ -330,30 +298,33 @@ class Cube(Solid):
                          'D': 5}
         )
 
-    def face_turn(self, turn):    
+    def __face_turn(self, move: Move):    
         # Turn a face in the clockwise direction.
-        for p in range(len(self.pieces)):
+        for piece in self.pieces:
             # Sticker of pice lies on the face that is being turned and that
             # the pice is not a center as they don't change position when being
             # turned.
-            if any(pos == move_face[turn] for pos in self.pieces[p].pos) and len(self.piece[p]) > 1:
-                self.pieces[p][:] = (s
-                for s in range(len(self.pieces[p][s]):
-                    if s.pos == move_face[
-                map(lambda sticker: sticker.pos = self.adj_mat[self.adj_mat.index(sticker.pos) - 1] if sticker.pos != move_face[piece.pos], piece.sticker)
-    def x(self):
+            if any(sticker.pos == move_face[move.face] for sticker in piece.stickers) and len(self.piece) > 1:
+                for sticker in piece.stickers:
+                    if sticker.pos != move_face[move.face]:
+                        print(self.adj_mat[move_face[move.face]], sticker.pos)
+                        sticker.pos = self.adj_mat[move_face[move.face]][self.adj_mat[move_face].index(sticker.pos) - 1]
+                        print(self.adj_mat[move_face[move.face]], sticker.pos)
+        self.show_all()
+                
+    def __x(self):
         self.move_face['B'] = self.move_face['U']
         self.move_face['U'] = self.move_face['F']
         self.move_face['F'] = self.move_face['D']
         self.move_face['D'] = self.adj_mat[self.adj_mat.index(move_face['F']) + 1]
 
-    def y(self):
+    def __y(self):
         self.move_face['L'] = self.move_face['F']
         self.move_face['F'] = self.move_face['R']
         self.move_face['R'] = self.move_face['B']
         self.move_face['B'] = self.adj_mat[self.adj_mat.index(move_face['R'] + 1)]
         
-    def z(self):
+    def __z(self):
         self.move_face['D'] = self.move_face['R']
         self.move_face['R'] = self.move_face['U']
         self.move_face['U'] = self.move_face['L']
