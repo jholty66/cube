@@ -292,15 +292,6 @@ class Cube(Square):
                                       'L':4,
                                       'D':5})
 
-    scheme = {
-       0:"#FFFFFF",
-       1:"#008000",
-       2:"#FF0000",
-       3:"#0000FF",
-       4:"#FFA500",
-       5:"#FFFF00:"
-    }
-
 class Octahedron(Triangle):
     def __init__(self, order: int):
         super().__init__(order = order,
