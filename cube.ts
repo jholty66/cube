@@ -1,2 +1,0 @@
-class Sticker {
-	constructor(
