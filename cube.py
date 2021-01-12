@@ -1,22 +1,11 @@
 #!/usr/bin/env python3.9
 
-'''
-TODO:
-Test the turn function to see that it works on all puzzles.
+# Prime moves were origionally ignored (number sides - 1 normal moves
+# were used instead) they are now added to improve performance.
+#
+# Rewrite solved function to only work on a given face.
 
-Function to scramble cube.  Later make scrambles WCA legal.
-
-(Maybe) function to display cube as plaintext. Faster to check functions
-that change state of cube.
-
-Search for 3D graphics librarty to display shapes.
-
-RESEARCH:
-Look at the rubiks cube solver that is written in CPP.
- '''
-
-import random
-import re
+import random, re
 from typing import *
 
 class Sticker:
