@@ -94,14 +94,6 @@ class Solid:
                             print(self.adj_mat[move_face[move.face]], sticker.pos)
             self.show_all()
 
-        def show(self, alg: List[str], type: Callable[[List[str]], str]) -> str:
-            '''Show internal representation of alg in type format.'''
-            pass
-
-        def exec(self, alg: List[Move]):
-            # Defined in child classes.
-            pass
-
     def solved_p(self) -> bool:
         # Go over all pices, add the colour of the stickers to a set for each
         # face.  If the length of the sets are 1, then return true.
@@ -115,12 +107,6 @@ class Solid:
                 elif face_colour[pos] != colour:
                     return False
         return True
-
-    def scramble(self):
-        moves = 'RBUDLR'
-        r = range(self.sides - 1)
-        for _ in range(len(self.pieces)):
-            self.alg_exec((random.choice(r), random.choice(moves), random.choice(r)))
 
     def __show_pieces(self, pieces):
         print([piece.show for piece in pieces])
@@ -270,11 +256,6 @@ class Tetrahedron(Triangle):
                                       'R':1,
                                       'B':2,
                                       'L':3})
-
-    def rotate(self):
-        # Tetrahedron is the only solid that does not have opposite faces that
-        # are parallel, the rotatate procudure will not work.
-        pass
 
 class Cube(Square):
     def __init__(self, order: int):
