@@ -96,7 +96,7 @@ class Solid:
         # Go over all pices, add the colour of the stickers to a set for each
         # face.  If the length of the sets are 1, then return true.
         face_colour = [None] * self.faces
-        for piece in self.edges + self.corners:
+        for piece in self.centers + self.edges + self.corners:
             for colour, pos in zip(piece.colour(), piece.pos()):
                 if face_colour[pos] == None:
                     face_colour[pos] = colour
