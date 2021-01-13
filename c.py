@@ -304,8 +304,3 @@ class Icosahedron(Triangle):
                                     [19,16,0],  # 18
                                     [15,18,2]], # 19
                          move_face = {})
-# Tests.
-alg = "R U' R' R (R U R' U')2"
-p = Cube(3)
-m=Move(1,'R',False)
-p.alg_face_turn(m)
