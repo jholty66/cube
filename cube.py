@@ -76,21 +76,20 @@ class Solid:
         self.edges = self.spawn_edges()
         self.corners = self.spawn_corners()
 
-    class Alg(): # More of a namespace than a class.
-        def face_turn(move):
-            dir = 1 if move.prime == True else -1
-            # Centers can be ignored as they do not change position when
-            # turning a face.
-            for piece in self.corners + self.edges:
-                # Find pieces that are on the face that is being turned.
-                # Change the positions of the stickers on the piece.
-                if any(sticker.pos == move_face[move.face] for sticker in piece.stickers) and len(self.piece) > 1:
-                    for sticker in piece.stickers:
-                        if sticker.pos != move_face[move.face]:
-                            print(self.adj_mat[move_face[move.face]], sticker.pos)
-                            sticker.pos = self.adj_mat[move_face[move.face]][self.adj_mat[move_face].index(sticker.pos) + dir]
-                            print(self.adj_mat[move_face[move.face]], sticker.pos)
-            self.show_all()
+    def alg_face_turn(self, move):
+        dir = 1 if move.prime == True else -1
+        # Centers can be ignored as they do not change position when
+        # turning a face.
+        for piece in self.corners + self.edges:
+            # Find pieces that are on the face that is being turned.
+            # Change the positions of the stickers on the piece.
+            if any(sticker.pos == move_face[move.face] for sticker in piece.stickers) and len(self.piece) > 1:
+                for sticker in piece.stickers:
+                    if sticker.pos != move_face[move.face]:
+                        print(self.adj_mat[move_face[move.face]], sticker.pos)
+                        sticker.pos = self.adj_mat[move_face[move.face]][self.adj_mat[move_face].index(sticker.pos) + dir]
+                        print(self.adj_mat[move_face[move.face]], sticker.pos)
+        self.show_all()
 
     def solved(self):
         # Go over all pices, add the colour of the stickers to a set for each
@@ -117,119 +116,116 @@ class Solid:
         print(len(self.centers) + len(self.edges) + len(self.corners))
 
 class Triangle(Solid):
-    class Alg(Solid.Alg):
-        def x(self):
-            self.move_face["B"] = self.move_face["L"]
-            self.move_face["L"] = self.move_face["U"]
-            self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["L"]) + 1]
+    def x(self):
+        self.move_face["B"] = self.move_face["L"]
+        self.move_face["L"] = self.move_face["U"]
+        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["L"]) + 1]
 
-        def x_prime(self):
-            self.move_face["B"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["L"]
-            self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"]) + 1]
+    def x_prime(self):
+        self.move_face["B"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["L"]
+        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"]) + 1]
 
-        def y(self):
-            self.move_face["L"] = self.move_face["B"]
-            self.move_face["B"] = self.move_face["R"]
-            self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["B"]) + 1]
+    def y(self):
+        self.move_face["L"] = self.move_face["B"]
+        self.move_face["B"] = self.move_face["R"]
+        self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["B"]) + 1]
 
-        def y_prime(self):
-            self.move_face["L"] = self.move_face["B"]
-            self.move_face["B"] = self.move_face["R"]
-            self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["B"]) + 1]
+    def y_prime(self):
+        self.move_face["L"] = self.move_face["B"]
+        self.move_face["B"] = self.move_face["R"]
+        self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["B"]) + 1]
 
-        # Not sure if z rotations go the right way as there are no F on
-        # tetrahedrons, assuming it rotatates in the direction of a B"
-        # turn.
-        def z(self):
-            self.move_face["R"] = self.move_face["L"]
-            self.move_face["L"] = self.move_face["U"]
-            self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["L"]) + 1]
+    # Not sure if z rotations go the right way as there are no F on
+    # tetrahedrons, assuming it rotatates in the direction of a B"
+    # turn.
+    def z(self):
+        self.move_face["R"] = self.move_face["L"]
+        self.move_face["L"] = self.move_face["U"]
+        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["L"]) + 1]
 
-        def z_prime(self):
-            self.move_face["R"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["L"]
-            self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"]) + 1]
+    def z_prime(self):
+        self.move_face["R"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["L"]
+        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"]) + 1]
 
 class Square(Solid):
-    class Alg(Solid.Alg):
-        def x(self):
-            self.move_face["B"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["F"]
-            self.move_face["F"] = self.move_face["D"]
-            self.move_face["D"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+    def x(self):
+        self.move_face["B"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["F"]
+        self.move_face["F"] = self.move_face["D"]
+        self.move_face["D"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
 
-        def x_prime(self):
-            self.move_face["B"] = self.move_face["D"]
-            self.move_face["D"] = self.move_face["F"]
-            self.move_face["F"] = self.move_face["U"]
-            self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+    def x_prime(self):
+        self.move_face["B"] = self.move_face["D"]
+        self.move_face["D"] = self.move_face["F"]
+        self.move_face["F"] = self.move_face["U"]
+        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
 
-        def y(self):
-            self.move_face["L"] = self.move_face["F"]
-            self.move_face["F"] = self.move_face["R"]
-            self.move_face["R"] = self.move_face["B"]
-            self.move_face["B"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+    def y(self):
+        self.move_face["L"] = self.move_face["F"]
+        self.move_face["F"] = self.move_face["R"]
+        self.move_face["R"] = self.move_face["B"]
+        self.move_face["B"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
 
-        def y_prime(self):
-            self.move_face["L"] = self.move_face["B"]
-            self.move_face["B"] = self.move_face["R"]
-            self.move_face["R"] = self.move_face["U"]
-            self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+    def y_prime(self):
+        self.move_face["L"] = self.move_face["B"]
+        self.move_face["B"] = self.move_face["R"]
+        self.move_face["R"] = self.move_face["U"]
+        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
 
-        def z(self):
-            self.move_face["D"] = self.move_face["R"]
-            self.move_face["R"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["L"]
-            self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
+    def z(self):
+        self.move_face["D"] = self.move_face["R"]
+        self.move_face["R"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["L"]
+        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
 
-        def z_prime(self):
-            self.move_face["D"] = self.move_face["L"]
-            self.move_face["L"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["R"]
-            self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
+    def z_prime(self):
+        self.move_face["D"] = self.move_face["L"]
+        self.move_face["L"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["R"]
+        self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
 
 class Pentagon(Solid):
-    class Alg(Solid.Alg):
-        def x(self):
-            self.move_face["BR"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["F"]
-            self.move_face["F"] = self.move_face["D"]
-            self.move_face["D"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+    def x(self):
+        self.move_face["BR"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["F"]
+        self.move_face["F"] = self.move_face["D"]
+        self.move_face["D"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
 
-        def x_prime(self):
-            self.move_face["BR"] = self.move_face["D"]
-            self.move_face["D"] = self.move_face["F"]
-            self.move_face["F"] = self.move_face["U"]
-            self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+    def x_prime(self):
+        self.move_face["BR"] = self.move_face["D"]
+        self.move_face["D"] = self.move_face["F"]
+        self.move_face["F"] = self.move_face["U"]
+        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
 
-        def y(self):
-            self.move_face["L"] = self.move_face["F"]
-            self.move_face["F"] = self.move_face["R"]
-            self.move_face["R"] = self.move_face["BR"]
-            self.move_face["BR"] = self.move_face["BL"]
-            self.move_face["BL"] = self.adj_mat[self.adj_mat.index(move_face["BR"] + 1)]
+    def y(self):
+        self.move_face["L"] = self.move_face["F"]
+        self.move_face["F"] = self.move_face["R"]
+        self.move_face["R"] = self.move_face["BR"]
+        self.move_face["BR"] = self.move_face["BL"]
+        self.move_face["BL"] = self.adj_mat[self.adj_mat.index(move_face["BR"] + 1)]
 
-        def y_prime(self):
-            self.move_face["L"] = self.move_face["BL"]
-            self.move_face["BL"] = self.move_face["BR"]
-            self.move_face["BR"] = self.move_face["R"]
-            self.move_face["R"] = self.move_face["F"]
-            self.move_face["F"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+    def y_prime(self):
+        self.move_face["L"] = self.move_face["BL"]
+        self.move_face["BL"] = self.move_face["BR"]
+        self.move_face["BR"] = self.move_face["R"]
+        self.move_face["R"] = self.move_face["F"]
+        self.move_face["F"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
 
-        def z(self):
-            self.move_face["DL"] = self.move_face["DR"]
-            self.move_face["DR"] = self.move_face["R"]
-            self.move_face["R"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["L"]
-            self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
+    def z(self):
+        self.move_face["DL"] = self.move_face["DR"]
+        self.move_face["DR"] = self.move_face["R"]
+        self.move_face["R"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["L"]
+        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
 
-        def z_prime(self):
-            self.move_face["DL"] = self.move_face["L"]
-            self.move_face["L"] = self.move_face["U"]
-            self.move_face["U"] = self.move_face["R"]
-            self.move_face["R"] = self.move_face["DR"]
-            self.move_face["DR"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+    def z_prime(self):
+        self.move_face["DL"] = self.move_face["L"]
+        self.move_face["L"] = self.move_face["U"]
+        self.move_face["U"] = self.move_face["R"]
+        self.move_face["R"] = self.move_face["DR"]
+        self.move_face["DR"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
 
 class Tetrahedron(Triangle):
     def __init__(self, order):
@@ -323,4 +319,5 @@ class Icosahedron(Triangle):
 
 alg = "R U' R' R (R U R' U')2"
 p = Cube(3)
-print(p.solved())
+m=Move(1,'R',False)
+p.alg_face_turn(m)
