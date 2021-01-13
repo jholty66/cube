@@ -94,7 +94,7 @@ class Solid:
                             print(self.adj_mat[move_face[move.face]], sticker.pos)
             self.show_all()
 
-    def solved_p(self) -> bool:
+    def solved(self) -> bool:
         # Go over all pices, add the colour of the stickers to a set for each
         # face.  If the length of the sets are 1, then return true.
         edges: List[Any] = self.edges
@@ -108,25 +108,15 @@ class Solid:
                     return False
         return True
 
-    def __show_pieces(self, pieces):
-        print([piece.show for piece in pieces])
-
-    def show_centers(self):
-        __show_pieces(self.centers)
-
-    def show_edges(self):
-        __show_pieces(self.edges)
-
-    def show_corners(self):
-        __show_pieces(self.corners)
+    def __show_pieces(self, pieces): print([piece.show for piece in pieces])
+    def show_centers(self): __show_pieces(self.centers)
+    def show_edges(self): __show_pieces(self.edges)
+    def show_corners(self): __show_pieces(self.corners)
 
     def show_all(self):
-        self.show_centers()
-        print()
-        self.show_edges()
-        print()
-        self.show_corners()
-        print()
+        self.show_centers();print()
+        self.show_edges();print()
+        self.show_corners();print()
         print(len(self.centers), len(self.edges), len(self.corners))
         print(len(self.centers) + len(self.edges) + len(self.corners))
 
@@ -337,4 +327,4 @@ class Icosahedron(Triangle):
 
 alg = "R U' R' R (R U R' U')2"
 p = Cube(3)
-print(p.solved_p())
+print(p.solved())
