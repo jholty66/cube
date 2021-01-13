@@ -1,12 +1,3 @@
-#!/usr/bin/env python3.9
-
-# Prime moves were origionally ignored (number sides - 1 normal moves
-# were used instead) they are now added to improve performance.
-#
-# Rewrite solved function to only work on a given face.
-
-import random, re
-
 class Sticker:
     def __init__(self, pos, depth):
         self.colour = pos # self.colour is immutable
