@@ -1,3 +1,4 @@
+from a import *
 class Sticker:
     def __init__(self, pos, depth):
         self.colour = pos # self.colour is immutable
@@ -17,15 +18,6 @@ class Edge(Piece):
     def __init__(self, s1, s2):super().__init__(s1, s2)
 class Corner(Piece):
     def __init__(self, s1, s2, s3):super().__init__(s1, s2, s3)
-
-class Move:
-    def __init__(self, depth, name, type, count, prime):
-        self.depth = depth
-        self.name = name
-        self.type = type
-        self.count = count
-        self.prime = prime
-    def show(self): print(self.depth,self.name,self.type,self.count,self.prime)
 
 class Solid:
     def spawn_centers(self):
