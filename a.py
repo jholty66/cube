@@ -34,7 +34,7 @@ def mirror(alg):
         move.prime=not move.prime
         return move.__str__()
     return (' ').join(mirror_mive(move) for move in __Alg(alg))
-def count_moves(alg, type=all):
+def count_moves(alg):
     assert type in ['QTM','HTM','STM']
     sum=0
     for move in __Alg(alg):
