@@ -83,13 +83,10 @@ class Solid:
         for piece in self.corners + self.edges:
             # Find pieces that are on the face that is being turned.
             # Change the positions of the stickers on the piece.
-            if any(sticker.pos == move_face[move.face] for sticker in piece.stickers) and len(self.piece) > 1:
+            if any(sticker.pos == self.move_face[move.name] for sticker in piece.stickers):
                 for sticker in piece.stickers:
-                    if sticker.pos != move_face[move.face]:
-                        print(self.adj_mat[move_face[move.face]], sticker.pos)
-                        sticker.pos = self.adj_mat[move_face[move.face]][self.adj_mat[move_face].index(sticker.pos) + dir]
-                        print(self.adj_mat[move_face[move.face]], sticker.pos)
-        self.show_all()
+                    if sticker.pos != self.move_face[move.name]:
+                        sticker.pos = self.adj_mat[self.move_face[move.name]][(self.adj_mat[self.move_face[move.name]].index(sticker.pos) + dir) % self.sides]
 
     def solved(self):
         # Go over all pices, add the colour of the stickers to a set for each
