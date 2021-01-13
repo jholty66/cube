@@ -19,11 +19,13 @@ class Corner(Piece):
     def __init__(self, s1, s2, s3):super().__init__(s1, s2, s3)
 
 class Move:
-    def __init__(self, depth, name, prime):
+    def __init__(self, depth, name, type, count, prime):
         self.depth = depth
         self.name = name
+        self.type = type
+        self.count = count
         self.prime = prime
-    def show(self): print(self.depth, self.name)
+    def show(self): print(self.depth,self.name,self.type,self.count,self.prime)
 
 class Solid:
     def spawn_centers(self):
@@ -67,7 +69,7 @@ class Solid:
         self.edges = self.spawn_edges()
         self.corners = self.spawn_corners()
 
-    def alg_face_turn(self, move):
+    def face_turn(self, move):
         dir = 1 if move.prime == True else -1
         # Centers can be ignored as they do not change position when
         # turning a face.
