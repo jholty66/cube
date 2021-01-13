@@ -104,10 +104,10 @@ class Solid:
                     return False
         return True
 
-    def __show_pieces(self, pieces): print([piece.show for piece in pieces])
-    def show_centers(self): __show_pieces(self.centers)
-    def show_edges(self): __show_pieces(self.edges)
-    def show_corners(self): __show_pieces(self.corners)
+    def show_pieces(self, pieces): print([piece.show() for piece in pieces])
+    def show_centers(self): self.show_pieces(self.centers)
+    def show_edges(self): self.show_pieces(self.edges)
+    def show_corners(self): self.show_pieces(self.corners)
 
     def show_all(self):
         self.show_centers();print()
