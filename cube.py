@@ -6,43 +6,40 @@
 # Rewrite solved function to only work on a given face.
 
 import random, re
-from typing import *
 
 class Sticker:
-    def __init__(self, pos: int, depth: int):
+    def __init__(self, pos, depth):
         self.colour = pos # self.colour is immutable
         self.pos = pos
         self.depth = depth
 
 class Piece:
-    def __init__(self, *stickers: Sticker):self.stickers = list(stickers)
-    def colour(self) -> List[int]:return [sticker.colour for sticker in self.stickers]
-    def pos(self) -> List[int]:return [sticker.pos for sticker in self.stickers]
-    def depth(self) -> List[int]:return [sticker.depth for sticker in self.stickers]
+    def __init__(self, *stickers):self.stickers = list(stickers)
+    def colour(self): return [sticker.colour for sticker in self.stickers]
+    def pos(self): return [sticker.pos for sticker in self.stickers]
+    def depth(self):return [sticker.depth for sticker in self.stickers]
     def show(self): print(self.colour(), self.pos(), self.depth())
 
 class Center(Piece):
-    def __init__(self, s1):super().__init__(s1)
-
+    def __init__(self, s1): super().__init__(s1)
 class Edge(Piece):
     def __init__(self, s1, s2):super().__init__(s1, s2)
-
 class Corner(Piece):
     def __init__(self, s1, s2, s3):super().__init__(s1, s2, s3)
 
 class Move:
-    def __init__(self, depth: int, face: str, prime: bool):
+    def __init__(self, depth, face, prime):
         self.depth = depth
         self.name = name
         self.prime = prime
-    def show(self):print(self.depth, self.face)
+    def show(self): print(self.depth, self.face)
 
 class Solid:
-    def spawn_centers(self) -> List[Center]:
+    def spawn_centers(self):
         return [Center(Sticker(i, int((self.order + 1) / 2))) for i in range(self.faces)] if self.order % 2 == 1 else []
 
-    def spawn_edges(self) -> List[Edge]:
-        edges: List[Edge] = []
+    def spawn_edges(self):
+        edges = []
         if self.order % 2 == 1:
             for i in range(len(self.adj_mat)):
                 for j in range(len(self.adj_mat[i])):
@@ -55,8 +52,8 @@ class Solid:
                                         edges.append(edge)
         return edges
 
-    def spawn_corners(self) -> List[Corner]:
-        corners: List[Corner] = []
+    def spawn_corners(self):
+        corners = []
         for i in range(len(self.adj_mat)):
             for j in range(len(self.adj_mat[i])):
                 for d1 in range(1, int(self.order / 2) + 1):
@@ -69,7 +66,7 @@ class Solid:
 
         return corners
 
-    def __init__(self, order: int, adj_mat: List[List[int]], move_face: Dict[str, int]):
+    def __init__(self, order, adj_mat, move_face):
         self.order = order
         self.adj_mat = adj_mat
         self.move_face = move_face # Describes what face a move should turn, varies between solids.
@@ -78,10 +75,9 @@ class Solid:
         self.centers = self.spawn_centers()
         self.edges = self.spawn_edges()
         self.corners = self.spawn_corners()
-        self.pieces = self.centers
 
     class Alg: # More of a namespace than a class.
-        def face_turn(self, move: Move):
+        def face_turn(self, move):
             dir = 1 if prime == True else -1
             for piece in self.pieces:
                 # Find pieces that are on the face that is being turned.
@@ -94,13 +90,11 @@ class Solid:
                             print(self.adj_mat[move_face[move.face]], sticker.pos)
             self.show_all()
 
-    def solved(self) -> bool:
+    def solved(self):
         # Go over all pices, add the colour of the stickers to a set for each
         # face.  If the length of the sets are 1, then return true.
-        edges: List[Any] = self.edges
-        corners: List[Any] = self.corners
         face_colour = [None] * self.faces
-        for piece in edges + corners:
+        for piece in self.edges + self.corners:
             for colour, pos in zip(piece.colour(), piece.pos()):
                 if face_colour[pos] == None:
                     face_colour[pos] = colour
@@ -236,7 +230,7 @@ class Pentagon(Solid):
             self.move_face["DR"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
 
 class Tetrahedron(Triangle):
-    def __init__(self, order: int):
+    def __init__(self, order):
         super().__init__(order = order,
                          adj_mat = [[1,2,3], # 0
                                     [0,3,2], # 1
@@ -248,7 +242,7 @@ class Tetrahedron(Triangle):
                                       'L':3})
 
 class Cube(Square):
-    def __init__(self, order: int):
+    def __init__(self, order):
         super().__init__(order = order,
                          adj_mat = [[1,2,3,4], # 0
                                     [2,0,4,5], # 1
@@ -264,7 +258,7 @@ class Cube(Square):
                                       'D':5})
 
 class Octahedron(Triangle):
-    def __init__(self, order: int):
+    def __init__(self, order):
         super().__init__(order = order,
                          adj_mat = [[1,2,3], # 0
                                     [0,4,6], # 1
@@ -277,7 +271,7 @@ class Octahedron(Triangle):
                          move_face = {})
 
 class Dodecahedron(Pentagon):
-    def __init__(self, order: int):
+    def __init__(self, order):
         super().__init__(order = order,
                          adj_mat = [[1,2,3,4,5],   # 0
                                     [0,5,6,7,2],   # 1
@@ -301,7 +295,7 @@ class Dodecahedron(Pentagon):
                                       'DL':6})
 
 class Icosahedron(Triangle):
-    def __init__(self, order: int):
+    def __init__(self, order):
         super().__init__(order = order,
                          adj_mat = [[1,3,18],   # 0
                                     [5,0,17],   # 1
