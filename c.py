@@ -9,7 +9,7 @@ class Piece:
     def colour(self): return [sticker.colour for sticker in self.stickers]
     def pos(self): return [sticker.pos for sticker in self.stickers]
     def depth(self):return [sticker.depth for sticker in self.stickers]
-    def show(self): print(self.colour(), self.pos(), self.depth())
+    def __str__(self): return str(self.colour(), self.pos(), self.depth()
 
 class Center(Piece):
     def __init__(self, s1): super().__init__(s1)
@@ -93,17 +93,8 @@ class Solid:
                     return False
         return True
 
-    def show_pieces(self, pieces): print([piece.show() for piece in pieces])
-    def show_centers(self): self.show_pieces(self.centers)
-    def show_edges(self): self.show_pieces(self.edges)
-    def show_corners(self): self.show_pieces(self.corners)
-
-    def show_all(self):
-        self.show_centers();print()
-        self.show_edges();print()
-        self.show_corners();print()
-        print(len(self.centers), len(self.edges), len(self.corners))
-        print(len(self.centers) + len(self.edges) + len(self.corners))
+    def __str__(self):
+        return f'Centers:\n{[center.__str__() for center in self.centers)]}\n\nEdges:\n{[edges.__str__() for edge in self.edges]}\n\nCorners:\n{[corner.__str__() for corner in self.corners]}\n\nCenters: {len(self.centers)}\nEdges: {len(self.edges)}\nCorners: {len(self.corners)}\n\nTotal {len(self.centers)+len(self.edges)+len(self.corners)}'
 
 class Triangle(Solid):
     def x(self):
