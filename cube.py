@@ -89,8 +89,8 @@ class Solid:
                         sticker.pos = self.adj_mat[self.move_face[move.name]][(self.adj_mat[self.move_face[move.name]].index(sticker.pos) + dir) % self.sides]
 
     def solved(self):
-        # Go over all pices, add the colour of the stickers to a set for each
-        # face.  If the length of the sets are 1, then return true.
+        # Return false if there is one more colour of sticker on a face,
+        # else return true.
         face_colour = [None] * self.faces
         for piece in self.centers + self.edges + self.corners:
             for colour, pos in zip(piece.colour(), piece.pos()):
