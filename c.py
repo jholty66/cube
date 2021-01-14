@@ -6,16 +6,16 @@ class Sticker:
         self.depth = depth
 
 class Piece:
-    def __init__(self, *stickers):self.stickers = list(stickers)
+    def __init__(self, *stickers): self.stickers = list(stickers)
     def colour(self): return [sticker.colour for sticker in self.stickers]
     def pos(self): return [sticker.pos for sticker in self.stickers]
-    def depth(self):return [sticker.depth for sticker in self.stickers]
-    def __str__(self): return str(self.colour(), self.pos(), self.depth()
+    def depth(self): return [sticker.depth for sticker in self.stickers]
+    def __str__(self): return str(self.colour(), self.pos(), self.depth())
 
 class Center(Piece):
     def __init__(self, s1): super().__init__(s1)
 class Edge(Piece):
-    def __init__(self, s1, s2):super().__init__(s1, s2)
+    def __init__(self, s1, s2): super().__init__(s1, s2)
 class Corner(Piece):
     def __init__(self, s1, s2, s3):super().__init__(s1, s2, s3)
 

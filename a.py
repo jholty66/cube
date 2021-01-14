@@ -30,7 +30,7 @@ def reverse(alg):return re.split(r'(\(|\)[0-9]?',alg).reverse().replace('(',')')
 def mirror(alg):
     def mirror_move(move):
         if move.name=='L':move.name=='R'
-        elif move.name=='R'move.name=='L'
+        elif move.name=='R':move.name=='L'
         move.prime=not move.prime
         return move.__str__()
     return (' ').join(mirror_mive(move) for move in __Alg(alg))
