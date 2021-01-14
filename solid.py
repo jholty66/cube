@@ -1,4 +1,4 @@
-from a import *
+import alg
 class Sticker:
     def __init__(self, pos, depth):
         self.colour = pos # self.colour is immutable
