@@ -1,5 +1,4 @@
-import c;from c import *
-alg = "R U' R' R (R U R' U')2"
-p = Cube(3)
-m=Move(1,'R',False)
-p.alg_face_turn(m)
+from solid import *
+p = Dodecahedron(3)
+alg = "R U R' F' R U R' U' R' F R2 U' R' ";print(alg);print(p.solved())
+for _ in range(3):p.exec_alg(alg);print(p.solved())
