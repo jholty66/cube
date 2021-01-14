@@ -33,7 +33,7 @@ class Solid:
                             for d3 in range(1, int((self.order + 1) / 2)):
                                 if 1 in (d1, d2):
                                     edge = Edge(Sticker(i, d1), Sticker(self.adj_mat[i][j], d2))
-                                    if [set(edge.pos()), edge.depth()] not in [[EDGE.pos, EDGE.depth] for EDGE in edges]:
+                                    if [edge.pos(), edge.depth()] not in [[set(EDGE.pos()), EDGE.depth()] for EDGE in edges]:
                                         edges.append(edge)
         return edges
 
@@ -46,7 +46,7 @@ class Solid:
                         for d3 in range(1, int(self.order / 2) + 1):
                             if 1 in (d1, d2, d3):
                                 corner = Corner(Sticker(i, d1), Sticker(self.adj_mat[i][j - 1], d2), Sticker(self.adj_mat[i][j], d3))
-                                if [set(corner.pos()), corner.depth()] not in [[CORNER.pos, CORNER.depth] for CORNER in corners]:
+                                if [corner.pos(), corner.depth()] not in [[set(CORNER.pos()), CORNER.depth()] for CORNER in corners]:
                                     corners.append(corner)
 
         return corners
