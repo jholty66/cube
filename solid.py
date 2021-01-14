@@ -62,7 +62,7 @@ class Solid:
         self.corners = self.spawn_corners()
 
     def face_turn(self, move):
-        dir = 1 if move.prime == True else -1
+        dir = 1 if move.prime == True else -1;dir*=move.count
         # Centers can be ignored as they do not change position when
         # turning a face.
         for piece in self.corners + self.edges:
@@ -73,33 +73,62 @@ class Solid:
                     if sticker.pos != self.move_face[move.name]:
                         sticker.pos = self.adj_mat[self.move_face[move.name]][(self.adj_mat[self.move_face[move.name]].index(sticker.pos) + dir) % self.sides]
 
+    def slice_turn(self, move): pass
+
+    # To be defined in child classes.
+    def x(): pass
+    def x_prime(): pass
+    def y(): pass
+    def y_prime(): pass
+    def z(): pass
+    def z_prime(): pass
+
+    # {(move.name move.prime): rotate_fn}
+    rotate = {('x', False): x(),
+              ('x', True): x_prime(),
+              ('y', False): y(),
+              ('y', True): y_prime(),
+              ('z', False): z(),
+              ('z', True): z_prime()}
+
+    def exec_alg(self, alg_str):
+        for move in alg.create(alg_str):
+            if move.type=='face': self.face_turn(move)
+            elif move.type=='rotation': self.rotate[(move.name, move.prime)]
+            elif move.type=='slice': slice_turn(move)
+            else: raise ValueError
+
     def solved(self):
         # Return false if there is one more colour of sticker on a face,
         # else return true.
         face_colour = [None] * self.faces
         for piece in self.centers + self.edges + self.corners:
             for colour, pos in zip(piece.colour(), piece.pos()):
-                if face_colour[pos] == None:
-                    face_colour[pos] = colour
-                elif face_colour[pos] != colour:
-                    return False
+                if face_colour[pos] == None: face_colour[pos] = colour
+                elif face_colour[pos] != colour: return False
         return True
 
     def __str__(self):
+        def show(pieces):
+            s=''
+            for piece in pieces: s += piece.__str__() + '\n'
+            return s
+
         return f'''Centers:
-{for center in self.centers:center.__str__()}
-
+colour | pos | depth
+{show(self.centers)}
 Edges:
-{for edge in self.edges:edge.__str__()}
-
+colour | pos | depth
+{show(self.edges)}
 Corners:
-{for corner in self.corners:corner.__str__()}
-
+colour | pos | depth
+{show(self.corners)}
 Centers: {len(self.centers)}
 Edges: {len(self.edges)}
 Corners: {len(self.corners)}
 
-Total {len(self.centers)+len(self.edges)+len(self.corners)}'''
+Movable: {len(self.edges)+len(self.corners)}
+Total: {len(self.centers)+len(self.edges)+len(self.corners)}'''
 
 class Triangle(Solid):
     def x(self):
