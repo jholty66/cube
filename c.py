@@ -87,13 +87,13 @@ class Solid:
 
     def __str__(self):
         return f'''Centers:
-{[center.__str__() for center in self.centers]}
+{for center in self.centers:center.__str__()}
 
 Edges:
-{[edges.__str__() for edge in self.edges]}
+{for edge in self.edges:edge.__str__()}
 
 Corners:
-{[corner.__str__() for corner in self.corners]}
+{for corner in self.corners:corner.__str__()}
 
 Centers: {len(self.centers)}
 Edges: {len(self.edges)}
