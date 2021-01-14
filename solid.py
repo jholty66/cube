@@ -10,7 +10,7 @@ class Piece:
     def colour(self): return [sticker.colour for sticker in self.stickers]
     def pos(self): return [sticker.pos for sticker in self.stickers]
     def depth(self): return [sticker.depth for sticker in self.stickers]
-    def __str__(self): return str(self.colour(), self.pos(), self.depth())
+    def __str__(self): return f'{self.colour()}\t{self.pos()}\t{self.depth()}'
 
 class Center(Piece):
     def __init__(self, s1): super().__init__(s1)
