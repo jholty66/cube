@@ -38,7 +38,7 @@ def inverse(alg): return (' ').join(move.inverse().__str__() for move in create(
 
 def reverse(alg): return (' ').join(expand(alg).split(' ').reverse())
 
-def mirror(alg): return (' ').join(move.mirror.__str__ for move in create(alg))
+def mirror(alg): return (' ').join(move.mirror.__str__() for move in create(alg))
 
 def count_moves(alg):
     assert type in ['QTM','HTM','STM']
