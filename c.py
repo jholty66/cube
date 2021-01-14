@@ -86,7 +86,20 @@ class Solid:
         return True
 
     def __str__(self):
-        return f'Centers:\n{[center.__str__() for center in self.centers)]}\n\nEdges:\n{[edges.__str__() for edge in self.edges]}\n\nCorners:\n{[corner.__str__() for corner in self.corners]}\n\nCenters: {len(self.centers)}\nEdges: {len(self.edges)}\nCorners: {len(self.corners)}\n\nTotal {len(self.centers)+len(self.edges)+len(self.corners)}'
+        return f'''Centers:
+{[center.__str__() for center in self.centers]}
+
+Edges:
+{[edges.__str__() for edge in self.edges]}
+
+Corners:
+{[corner.__str__() for corner in self.corners]}
+
+Centers: {len(self.centers)}
+Edges: {len(self.edges)}
+Corners: {len(self.corners)}
+
+Total {len(self.centers)+len(self.edges)+len(self.corners)}'''
 
 class Triangle(Solid):
     def x(self):
