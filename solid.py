@@ -30,6 +30,8 @@ class Solid:
                         for p, _ in enumerate(adjface):
                             pair = [adjface[p], adjface[p - 1]] 
                             if all(point not in fullPoints for point in pair) and set(pair) not in fullPairs:
+                                fullPoints = set(point for point in [point for face in faces for point in face] if points.count(point) == 3)
+                                fullPairs.append(set(pair))
                                 return pair
                 print('Error count not find any pairs'); quit()
 
@@ -40,6 +42,8 @@ class Solid:
                             for k, point in enumerate(adjface):
                                 if point == face[-1]:
                                     if set(point, face[face.index(point) - dir % len(self.numSides)]) == set(adjface[p], adjface[(p + dir) % len(self.numSides)]):
+                                        fullPoints = set(point for point in [point for face in faces for point in face] if points.count(point) == 3)
+                                        fullPairs.append(set(pair))
                                         faces.insert(0 if dir == 1 else -1, point)
 
             for i in range(self.numFaces - 1):
