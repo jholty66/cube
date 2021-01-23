@@ -92,7 +92,7 @@ class Solid:
                                 if [corner.pos(), corner.depth()] not in [[set(CORNER.pos()), CORNER.depth()] for CORNER in corners]:
                                     corners.append(corner)
 
-def faceTurn(self, move):
+    def faceTurn(self, move):
         dir = 1 if move.prime == True else -1;dir*=move.count
         # Centers can be ignored as they do not change position when
         # turning a face.
@@ -103,7 +103,6 @@ def faceTurn(self, move):
                 for sticker in piece.stickers:
                     if sticker.pos != self.moveFace[move.name]:
                         sticker.pos = self.adjmat[self.moveFace[move.name]][(self.adjmat[self.moveFace[move.name]].index(sticker.pos) + dir) % self.numSides]
-
 
     def sliceTurn(self, move): pass
 
