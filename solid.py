@@ -16,47 +16,47 @@ class Piece:
     def __str__(self): return f'{self.colour()}\t{self.pos()}\t{self.depth()}'
 
 class Solid:
-        def makeFaces(self):
-            # Create list of faces that contain list of points.
-            # Every point appears in 3 faces.
-            # Pairs of adjacent points appear in 2 faces.
-            numPoints = self.numSides; fullPoints = set(); fullPairs = []
-            faces = [list(range(numPoints))] + [None] * (self.numFaces - 1)
+    def makeFaces(self):
+        # Create list of faces that contain list of points.
+        # Every point appears in 3 faces.
+        # Pairs of adjacent points appear in 2 faces.
+        numPoints = self.numSides; fullPoints = set(); fullPairs = []
+        faces = [list(range(numPoints))] + [None] * (self.numFaces - 1)
 
-            def findPair():
-                # Pick two adjacent points on an adjacent face.
+        def findPair():
+            # Pick two adjacent points on an adjacent face.
+            for adjface, j in enumerate(faces):
+                if j in self.adjmat[i] and adjface != None:
+                    for p, _ in enumerate(adjface):
+                        pair = [adjface[p], adjface[p - 1]] 
+                        if all(point not in fullPoints for point in pair) and set(pair) not in fullPairs:
+                            fullPoints = set(point for point in [point for face in faces for point in face] if points.count(point) == 3)
+                            fullPairs.append(set(pair))
+                            return pair
+            print('Error count not find any pairs'); quit()
+
+        def findPoint(dir):
+            while True:
                 for adjface, j in enumerate(faces):
                     if j in self.adjmat[i] and adjface != None:
-                        for p, _ in enumerate(adjface):
-                            pair = [adjface[p], adjface[p - 1]] 
-                            if all(point not in fullPoints for point in pair) and set(pair) not in fullPairs:
-                                fullPoints = set(point for point in [point for face in faces for point in face] if points.count(point) == 3)
-                                fullPairs.append(set(pair))
-                                return pair
-                print('Error count not find any pairs'); quit()
+                        for k, point in enumerate(adjface):
+                            if point == face[-1]:
+                                if set(point, face[face.index(point) - dir % len(self.numSides)]) == set(adjface[p], adjface[(p + dir) % len(self.numSides)]):
+                                    fullPoints = set(point for point in [point for face in faces for point in face] if points.count(point) == 3)
+                                    fullPairs.append(set(pair))
+                                    faces.insert(0 if dir == 1 else -1, point)
 
-            def findPoint(dir):
-                while True:
-                    for adjface, j in enumerate(faces):
-                        if j in self.adjmat[i] and adjface != None:
-                            for k, point in enumerate(adjface):
-                                if point == face[-1]:
-                                    if set(point, face[face.index(point) - dir % len(self.numSides)]) == set(adjface[p], adjface[(p + dir) % len(self.numSides)]):
-                                        fullPoints = set(point for point in [point for face in faces for point in face] if points.count(point) == 3)
-                                        fullPairs.append(set(pair))
-                                        faces.insert(0 if dir == 1 else -1, point)
-
-            for i in range(self.numFaces - 1):
-                face = findPair() # Use function to return out of double for loop.
-                # Add adjacent points before the first point in the pair that lie on adjacent faces.
-                findPoint(1)
-                # Add adjacent points after the second point in the pair that lie on adjacent faces.
-                findPoint(-1)
-                # If there are no adjacent faces and the face does not have all its points, create new points on the face.
-                if len(face) < self.numSides:
-                    newPoints = range(1 + numPoints, 1 + (self.numSides - len(face))) 
-                    face += newPoints; numPoints += len(newPoints)
-            assert len(faces) == self.numFaces; print(numPoints); return faces
+        for i in range(self.numFaces - 1):
+            face = findPair() # Use function to return out of double for loop.
+            # Add adjacent points before the first point in the pair that lie on adjacent faces.
+            findPoint(1)
+            # Add adjacent points after the second point in the pair that lie on adjacent faces.
+            findPoint(-1)
+            # If there are no adjacent faces and the face does not have all its points, create new points on the face.
+            if len(face) < self.numSides:
+                newPoints = range(1 + numPoints, 1 + (self.numSides - len(face))) 
+                face += newPoints; numPoints += len(newPoints)
+        assert len(faces) == self.numFaces; print(numPoints); return faces
 
     def __init__(self, size, order, points, adjmat, moveFace):
         self.size = size
