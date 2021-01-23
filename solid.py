@@ -16,11 +16,57 @@ class Piece:
     def __str__(self): return f'{self.colour()}\t{self.pos()}\t{self.depth()}'
 
 class Solid:
-    def spawnCenters(self):
-        return [Piece(Sticker(i, int((self.size + 1) / 2))) for i in range(self.numFaces)] if self.size % 2 == 1 else []
+        def makeFaces(self):
+            # Create list of faces that contain list of points.
+            # Every point appears in 3 faces.
+            # Pairs of adjacent points appear in 2 faces.
+            numPoints = self.numSides; fullPoints = set(); fullPairs = []
+            faces = [list(range(numPoints))] + [None] * (self.numFaces - 1)
 
-    def spawnEdges(self):
+            def findPair():
+                # Pick two adjacent points on an adjacent face.
+                for adjface, j in enumerate(faces):
+                    if j in self.adjmat[i] and adjface != None:
+                        for p, _ in enumerate(adjface):
+                            pair = [adjface[p], adjface[p - 1]] 
+                            if all(point not in fullPoints for point in pair) and set(pair) not in fullPairs:
+                                return pair
+                print('Error count not find any pairs'); quit()
+
+            def findPoint(dir):
+                while True:
+                    for adjface, j in enumerate(faces):
+                        if j in self.adjmat[i] and adjface != None:
+                            for k, point in enumerate(adjface):
+                                if point == face[-1]:
+                                    if set(point, face[face.index(point) - dir % len(self.numSides)]) == set(adjface[p], adjface[(p + dir) % len(self.numSides)]):
+                                        faces.insert(0 if dir == 1 else -1, point)
+
+            for i in range(self.numFaces - 1):
+                face = findPair() # Use function to return out of double for loop.
+                # Add adjacent points before the first point in the pair that lie on adjacent faces.
+                findPoint(1)
+                # Add adjacent points after the second point in the pair that lie on adjacent faces.
+                findPoint(-1)
+                # If there are no adjacent faces and the face does not have all its points, create new points on the face.
+                if len(face) < self.numSides:
+                    newPoints = range(1 + numPoints, 1 + (self.numSides - len(face))) 
+                    face += newPoints; numPoints += len(newPoints)
+            assert len(faces) == self.numFaces; print(numPoints); return faces
+
+    def __init__(self, size, order, points, adjmat, moveFace):
+        self.size = size
+        self.order = order # Order is the number of faces that meet at a point.
+        self.points = points
+        self.adjmat = adjmat
+        self.moveFace = moveFace # Describes what face a move should turn, varies between solids.
+        self.numFaces = len(adjmat)
+        self.numSides = len(adjmat[0])
+
+        centers = [Piece(Sticker(i, int((self.size + 1) / 2))) for i in range(self.numFaces)] if self.size % 2 == 1 else []
+
         edges = []
+
         if self.size % 2 == 1:
             for i in range(len(self.adjmat)):
                 for j in range(len(self.adjmat[i])):
@@ -31,9 +77,7 @@ class Solid:
                                     edge = Piece(Sticker(i, d1), Sticker(self.adjmat[i][j], d2))
                                     if [edge.pos(), edge.depth()] not in [[set(EDGE.pos()), EDGE.depth()] for EDGE in edges]:
                                         edges.append(edge)
-        return edges
-
-    def spawnCorners(self):
+        
         corners = []
         for i in range(len(self.adjmat)):
             for j in range(len(self.adjmat[i])):
@@ -45,60 +89,7 @@ class Solid:
                                 if [corner.pos(), corner.depth()] not in [[set(CORNER.pos()), CORNER.depth()] for CORNER in corners]:
                                     corners.append(corner)
 
-        return corners
-
-    def spawnFaces(self):
-        # Create list of faces that contain list of points.
-        # Every point appears in 3 faces.
-        # Pairs of adjacent points appear in 2 faces.
-        points = self.numSides
-        faces = [list(range(points))] + [None] * (self.numFaces - 1)
-        def findPair():
-            # Pick two adjacent points on an adjacent face.
-            for adjface, j in enumerate(faces):
-                if j in self.adjmat[i] and adjface != None:
-                    for p, _ in enumerate(adjface):
-                        pair = [adjface[p], adjface[p - 1]] 
-                        if all(point not in fullPoints for point in pair) and set(pair) not in fullPairs:
-                            fullPairs.append(set(pair)); return pair
-            print('Error count not find any pairs'); quit()
-
-        def findPoint(dir):
-            while True:
-                for adjface, j in enumerate(faces):
-                    if j in self.adjmat[i] and adjface != None:
-                        for k, point in enumerate(adjface):
-                            if point == face[-1]:
-                                if set(point, face[face.index(point) - dir % len(self.numSides)]) == set(adjface[p], adjface[(p + dir) % len(self.numSides)]):
-                                    faces.insert(0 if dir == 1 else -1, point)
-
-        for i in range(self.numFaces - 1):
-            face = findPair() # Use function to return out of double for loop.
-            # Add adjacent points before the first point in the pair that lie on adjacent faces.
-            findPoint(1)
-            # Add adjacent points after the second point in the pair that lie on adjacent faces.
-            findPoint(-1)
-            # If there are no adjacent faces and the face does not have all its points, create new points on the face.
-            if len(face) < self.numSides:
-                newPoints = range(1 + points, 1 + (self.numSides - len(face))) 
-                face += newPoints; points += len(newPoints)
-        assert len(faces) == self.numFaces
-        print(points); return faces
-
-    def __init__(self, size, order, points, adjmat, moveFace):
-        self.size = size
-        self.order = order # Order is the number of faces that meet at a point.
-        self.points = points
-        self.adjmat = adjmat
-        self.moveFace = moveFace # Describes what face a move should turn, varies between solids.
-        self.numFaces = len(adjmat)
-        self.numSides = len(adjmat[0])
-        self.faces = spawnFaces()
-        self.centers = self.spawnCenters()
-        self.edges = self.spawnEdges()
-        self.corners = self.spawnCorners()
-
-    def faceTurn(self, move):
+def faceTurn(self, move):
         dir = 1 if move.prime == True else -1;dir*=move.count
         # Centers can be ignored as they do not change position when
         # turning a face.
