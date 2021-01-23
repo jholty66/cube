@@ -70,7 +70,6 @@ class Solid:
         centers = [Piece(Sticker(i, int((self.size + 1) / 2))) for i in range(self.numFaces)] if self.size % 2 == 1 else []
 
         edges = []
-
         if self.size % 2 == 1:
             for i in range(len(self.adjmat)):
                 for j in range(len(self.adjmat[i])):
