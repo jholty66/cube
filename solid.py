@@ -12,16 +12,9 @@ class Piece:
     def depth(self): return [sticker.depth for sticker in self.stickers]
     def __str__(self): return f'{self.colour()}\t{self.pos()}\t{self.depth()}'
 
-class Center(Piece):
-    def __init__(self, s1): super().__init__(s1)
-class Edge(Piece):
-    def __init__(self, s1, s2): super().__init__(s1, s2)
-class Corner(Piece):
-    def __init__(self, s1, s2, s3):super().__init__(s1, s2, s3)
-
 class Solid:
     def spawn_centers(self):
-        return [Center(Sticker(i, int((self.order + 1) / 2))) for i in range(self.faces)] if self.order % 2 == 1 else []
+        return [Piece(Sticker(i, int((self.size + 1) / 2))) for i in range(self.numFaces)] if self.size % 2 == 1 else []
 
     def spawn_edges(self):
         edges = []
@@ -32,7 +25,7 @@ class Solid:
                         for d2 in range(1, int((self.order + 1) / 2)):
                             for d3 in range(1, int((self.order + 1) / 2)):
                                 if 1 in (d1, d2):
-                                    edge = Edge(Sticker(i, d1), Sticker(self.adj_mat[i][j], d2))
+                                    edge = Piece(Sticker(i, d1), Sticker(self.adj_mat[i][j], d2))
                                     if [edge.pos(), edge.depth()] not in [[set(EDGE.pos()), EDGE.depth()] for EDGE in edges]:
                                         edges.append(edge)
         return edges
@@ -45,7 +38,7 @@ class Solid:
                     for d2 in range(1, int(self.order / 2) + 1):
                         for d3 in range(1, int(self.order / 2) + 1):
                             if 1 in (d1, d2, d3):
-                                corner = Corner(Sticker(i, d1), Sticker(self.adj_mat[i][j - 1], d2), Sticker(self.adj_mat[i][j], d3))
+                                corner = Piece(Sticker(i, d1), Sticker(self.adj_mat[i][j - 1], d2), Sticker(self.adj_mat[i][j], d3))
                                 if [corner.pos(), corner.depth()] not in [[set(CORNER.pos()), CORNER.depth()] for CORNER in corners]:
                                     corners.append(corner)
 
