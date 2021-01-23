@@ -16,47 +16,47 @@ class Piece:
     def __str__(self): return f'{self.colour()}\t{self.pos()}\t{self.depth()}'
 
 class Solid:
-    def spawn_centers(self):
+    def spawnCenters(self):
         return [Piece(Sticker(i, int((self.size + 1) / 2))) for i in range(self.numFaces)] if self.size % 2 == 1 else []
 
-    def spawn_edges(self):
+    def spawnEdges(self):
         edges = []
         if self.size % 2 == 1:
-            for i in range(len(self.adj_mat)):
-                for j in range(len(self.adj_mat[i])):
+            for i in range(len(self.adjmat)):
+                for j in range(len(self.adjmat[i])):
                     for d1 in range(1, int((self.size + 1) / 2)):
                         for d2 in range(1, int((self.size + 1) / 2)):
                             for d3 in range(1, int((self.size + 1) / 2)):
                                 if 1 in (d1, d2):
-                                    edge = Piece(Sticker(i, d1), Sticker(self.adj_mat[i][j], d2))
+                                    edge = Piece(Sticker(i, d1), Sticker(self.adjmat[i][j], d2))
                                     if [edge.pos(), edge.depth()] not in [[set(EDGE.pos()), EDGE.depth()] for EDGE in edges]:
                                         edges.append(edge)
         return edges
 
-    def spawn_corners(self):
+    def spawnCorners(self):
         corners = []
-        for i in range(len(self.adj_mat)):
-            for j in range(len(self.adj_mat[i])):
+        for i in range(len(self.adjmat)):
+            for j in range(len(self.adjmat[i])):
                 for d1 in range(1, int(self.size / 2) + 1):
                     for d2 in range(1, int(self.size / 2) + 1):
                         for d3 in range(1, int(self.size / 2) + 1):
                             if 1 in (d1, d2, d3):
-                                corner = Piece(Sticker(i, d1), Sticker(self.adj_mat[i][j - 1], d2), Sticker(self.adj_mat[i][j], d3))
+                                corner = Piece(Sticker(i, d1), Sticker(self.adjmat[i][j - 1], d2), Sticker(self.adjmat[i][j], d3))
                                 if [corner.pos(), corner.depth()] not in [[set(CORNER.pos()), CORNER.depth()] for CORNER in corners]:
                                     corners.append(corner)
 
         return corners
 
-    def spawn_faces(self):
+    def spawnFaces(self):
         # Create list of faces that contain list of points.
         # Every point appears in 3 faces.
         # Pairs of adjacent points appear in 2 faces.
-        points = self.num_sides
+        points = self.numSides
         faces = [list(range(points))] + [None] * (self.numFaces - 1)
         def findPair():
             # Pick two adjacent points on an adjacent face.
             for adjface, j in enumerate(faces):
-                if j in self.adj_mat[i] and adjface != None:
+                if j in self.adjmat[i] and adjface != None:
                     for p, _ in enumerate(adjface):
                         pair = [adjface[p], adjface[p - 1]] 
                         if all(point not in fullPoints for point in pair) and set(pair) not in fullPairs:
@@ -66,10 +66,10 @@ class Solid:
         def findPoint(dir):
             while True:
                 for adjface, j in enumerate(faces):
-                    if j in self.adj_mat[i] and adjface != None:
+                    if j in self.adjmat[i] and adjface != None:
                         for k, point in enumerate(adjface):
                             if point == face[-1]:
-                                if set(point, face[face.index(point) - dir % len(self.num_sides)]) == set(adjface[p], adjface[(p + dir) % len(self.num_sides)]):
+                                if set(point, face[face.index(point) - dir % len(self.numSides)]) == set(adjface[p], adjface[(p + dir) % len(self.numSides)]):
                                     faces.insert(0 if dir == 1 else -1, point)
 
         for i in range(self.numFaces - 1):
@@ -79,71 +79,71 @@ class Solid:
             # Add adjacent points after the second point in the pair that lie on adjacent faces.
             findPoint(-1)
             # If there are no adjacent faces and the face does not have all its points, create new points on the face.
-            if len(face) < self.num_sides:
-                newPoints = range(1 + points, 1 + (self.num_sides - len(face))) 
+            if len(face) < self.numSides:
+                newPoints = range(1 + points, 1 + (self.numSides - len(face))) 
                 face += newPoints; points += len(newPoints)
         assert len(faces) == self.numFaces
         print(points); return faces
 
-    def __init__(self, size, order, points, adj_mat, move_face):
+    def __init__(self, size, order, points, adjmat, moveFace):
         self.size = size
         self.order = order # Order is the number of faces that meet at a point.
         self.points = points
-        self.adj_mat = adj_mat
-        self.move_face = move_face # Describes what face a move should turn, varies between solids.
-        self.num_faces = len(adj_mat)
-        self.num_sides = len(adj_mat[0])
-        self.faces = spawn_faces()
-        self.centers = self.spawn_centers()
-        self.edges = self.spawn_edges()
-        self.corners = self.spawn_corners()
+        self.adjmat = adjmat
+        self.moveFace = moveFace # Describes what face a move should turn, varies between solids.
+        self.numFaces = len(adjmat)
+        self.numSides = len(adjmat[0])
+        self.faces = spawnFaces()
+        self.centers = self.spawnCenters()
+        self.edges = self.spawnEdges()
+        self.corners = self.spawnCorners()
 
-    def face_turn(self, move):
+    def faceTurn(self, move):
         dir = 1 if move.prime == True else -1;dir*=move.count
         # Centers can be ignored as they do not change position when
         # turning a face.
         for piece in self.corners + self.edges:
             # Find pieces that are on the face that is being turned.
             # Change the positions of the stickers on the piece.
-            if any(sticker.pos == self.move_face[move.name] for sticker in piece.stickers):
+            if any(sticker.pos == self.moveFace[move.name] for sticker in piece.stickers):
                 for sticker in piece.stickers:
-                    if sticker.pos != self.move_face[move.name]:
-                        sticker.pos = self.adj_mat[self.move_face[move.name]][(self.adj_mat[self.move_face[move.name]].index(sticker.pos) + dir) % self.num_sides]
+                    if sticker.pos != self.moveFace[move.name]:
+                        sticker.pos = self.adjmat[self.moveFace[move.name]][(self.adjmat[self.moveFace[move.name]].index(sticker.pos) + dir) % self.numSides]
 
 
-    def slice_turn(self, move): pass
+    def sliceTurn(self, move): pass
 
     # To be defined in child classes.
     def x(self): pass
-    def x_prime(self): pass
+    def xPrime(self): pass
     def y(self): pass
-    def y_prime(self): pass
+    def yPrime(self): pass
     def z(self): pass
-    def z_prime(self): pass
+    def zPrime(self): pass
 
-    # {(move.name move.prime): rotate_fn}
+    # {(move.name move.prime): rotate fn}
     rotate = {('x', False): x,
-              ('x', True): x_prime,
+              ('x', True): xPrime,
               ('y', False): y,
-              ('y', True): y_prime,
+              ('y', True): yPrime,
               ('z', False): z,
-              ('z', True): z_prime}
+              ('z', True): zPrime}
 
-    def exec_alg(self, alg_str):
-        for move in alg.create(alg_str):
-            if move.type=='face': self.face_turn(move)
+    def execAlg(self, algStr):
+        for move in alg.create(algStr):
+            if move.type=='face': self.faceTurn(move)
             elif move.type=='rotation': self.rotate[(move.name, move.prime)]()
-            elif move.type=='slice': slice_turn(move)
+            elif move.type=='slice': sliceTurn(move)
             else: raise ValueError
 
     def solved(self):
         # Return false if there is one more colour of sticker on a face,
         # else return true.
-        face_colour = [None] * self.numFaces
+        faceColour = [None] * self.numFaces
         for piece in self.centers + self.edges + self.corners:
             for colour, pos in zip(piece.colour(), piece.pos()):
-                if face_colour[pos] == None: face_colour[pos] = colour
-                elif face_colour[pos] != colour: return False
+                if faceColour[pos] == None: faceColour[pos] = colour
+                elif faceColour[pos] != colour: return False
         return True
 
     def __str__(self):
@@ -170,115 +170,115 @@ Total: {len(self.centers)+len(self.edges)+len(self.corners)}'''
 
 class Triangle(Solid):
     def x(self):
-        self.move_face["B"] = self.move_face["L"]
-        self.move_face["L"] = self.move_face["U"]
-        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["L"]) + 1]
+        self.moveFace["B"] = self.moveFace["L"]
+        self.moveFace["L"] = self.moveFace["U"]
+        self.moveFace["U"] = self.adjmat[self.adjmat.index(moveFace["L"]) + 1]
 
-    def x_prime(self):
-        self.move_face["B"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["L"]
-        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"]) + 1]
+    def xPrime(self):
+        self.moveFace["B"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["L"]
+        self.moveFace["L"] = self.adjmat[self.adjmat.index(moveFace["U"]) + 1]
 
     def y(self):
-        self.move_face["L"] = self.move_face["B"]
-        self.move_face["B"] = self.move_face["R"]
-        self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["B"]) + 1]
+        self.moveFace["L"] = self.moveFace["B"]
+        self.moveFace["B"] = self.moveFace["R"]
+        self.moveFace["R"] = self.adjmat[self.adjmat.index(moveFace["B"]) + 1]
 
-    def y_prime(self):
-        self.move_face["L"] = self.move_face["B"]
-        self.move_face["B"] = self.move_face["R"]
-        self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["B"]) + 1]
+    def yPrime(self):
+        self.moveFace["L"] = self.moveFace["B"]
+        self.moveFace["B"] = self.moveFace["R"]
+        self.moveFace["R"] = self.adjmat[self.adjmat.index(moveFace["B"]) + 1]
 
     # Not sure if z rotations go the right way as there are no F on
     # tetrahedrons, assuming it rotatates in the direction of a B"
     # turn.
     def z(self):
-        self.move_face["R"] = self.move_face["L"]
-        self.move_face["L"] = self.move_face["U"]
-        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["L"]) + 1]
+        self.moveFace["R"] = self.moveFace["L"]
+        self.moveFace["L"] = self.moveFace["U"]
+        self.moveFace["U"] = self.adjmat[self.adjmat.index(moveFace["L"]) + 1]
 
-    def z_prime(self):
-        self.move_face["R"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["L"]
-        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"]) + 1]
+    def zPrime(self):
+        self.moveFace["R"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["L"]
+        self.moveFace["L"] = self.adjmat[self.adjmat.index(moveFace["U"]) + 1]
 
 class Square(Solid):
     def x(self):
-        self.move_face["B"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["F"]
-        self.move_face["F"] = self.move_face["D"]
-        self.move_face["D"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+        self.moveFace["B"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["F"]
+        self.moveFace["F"] = self.moveFace["D"]
+        self.moveFace["D"] = self.adjmat[self.adjmat.index(moveFace["F"]) + 1]
 
-    def x_prime(self):
-        self.move_face["B"] = self.move_face["D"]
-        self.move_face["D"] = self.move_face["F"]
-        self.move_face["F"] = self.move_face["U"]
-        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+    def xPrime(self):
+        self.moveFace["B"] = self.moveFace["D"]
+        self.moveFace["D"] = self.moveFace["F"]
+        self.moveFace["F"] = self.moveFace["U"]
+        self.moveFace["U"] = self.adjmat[self.adjmat.index(moveFace["F"]) + 1]
 
     def y(self):
-        self.move_face["L"] = self.move_face["F"]
-        self.move_face["F"] = self.move_face["R"]
-        self.move_face["R"] = self.move_face["B"]
-        self.move_face["B"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+        self.moveFace["L"] = self.moveFace["F"]
+        self.moveFace["F"] = self.moveFace["R"]
+        self.moveFace["R"] = self.moveFace["B"]
+        self.moveFace["B"] = self.adjmat[self.adjmat.index(moveFace["R"] + 1)]
 
-    def y_prime(self):
-        self.move_face["L"] = self.move_face["B"]
-        self.move_face["B"] = self.move_face["R"]
-        self.move_face["R"] = self.move_face["U"]
-        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+    def yPrime(self):
+        self.moveFace["L"] = self.moveFace["B"]
+        self.moveFace["B"] = self.moveFace["R"]
+        self.moveFace["R"] = self.moveFace["U"]
+        self.moveFace["U"] = self.adjmat[self.adjmat.index(moveFace["R"] + 1)]
 
     def z(self):
-        self.move_face["D"] = self.move_face["R"]
-        self.move_face["R"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["L"]
-        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
+        self.moveFace["D"] = self.moveFace["R"]
+        self.moveFace["R"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["L"]
+        self.moveFace["L"] = self.adjmat[self.adjmat.index(moveFace["U"] + 1)]
 
-    def z_prime(self):
-        self.move_face["D"] = self.move_face["L"]
-        self.move_face["L"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["R"]
-        self.move_face["R"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
+    def zPrime(self):
+        self.moveFace["D"] = self.moveFace["L"]
+        self.moveFace["L"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["R"]
+        self.moveFace["R"] = self.adjmat[self.adjmat.index(moveFace["U"] + 1)]
 
 class Pentagon(Solid):
     def x(self):
-        self.move_face["BR"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["F"]
-        self.move_face["F"] = self.move_face["D"]
-        self.move_face["D"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+        self.moveFace["BR"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["F"]
+        self.moveFace["F"] = self.moveFace["D"]
+        self.moveFace["D"] = self.adjmat[self.adjmat.index(moveFace["F"]) + 1]
 
-    def x_prime(self):
-        self.move_face["BR"] = self.move_face["D"]
-        self.move_face["D"] = self.move_face["F"]
-        self.move_face["F"] = self.move_face["U"]
-        self.move_face["U"] = self.adj_mat[self.adj_mat.index(move_face["F"]) + 1]
+    def xPrime(self):
+        self.moveFace["BR"] = self.moveFace["D"]
+        self.moveFace["D"] = self.moveFace["F"]
+        self.moveFace["F"] = self.moveFace["U"]
+        self.moveFace["U"] = self.adjmat[self.adjmat.index(moveFace["F"]) + 1]
 
     def y(self):
-        self.move_face["L"] = self.move_face["F"]
-        self.move_face["F"] = self.move_face["R"]
-        self.move_face["R"] = self.move_face["BR"]
-        self.move_face["BR"] = self.move_face["BL"]
-        self.move_face["BL"] = self.adj_mat[self.adj_mat.index(move_face["BR"] + 1)]
+        self.moveFace["L"] = self.moveFace["F"]
+        self.moveFace["F"] = self.moveFace["R"]
+        self.moveFace["R"] = self.moveFace["BR"]
+        self.moveFace["BR"] = self.moveFace["BL"]
+        self.moveFace["BL"] = self.adjmat[self.adjmat.index(moveFace["BR"] + 1)]
 
-    def y_prime(self):
-        self.move_face["L"] = self.move_face["BL"]
-        self.move_face["BL"] = self.move_face["BR"]
-        self.move_face["BR"] = self.move_face["R"]
-        self.move_face["R"] = self.move_face["F"]
-        self.move_face["F"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+    def yPrime(self):
+        self.moveFace["L"] = self.moveFace["BL"]
+        self.moveFace["BL"] = self.moveFace["BR"]
+        self.moveFace["BR"] = self.moveFace["R"]
+        self.moveFace["R"] = self.moveFace["F"]
+        self.moveFace["F"] = self.adjmat[self.adjmat.index(moveFace["R"] + 1)]
 
     def z(self):
-        self.move_face["DL"] = self.move_face["DR"]
-        self.move_face["DR"] = self.move_face["R"]
-        self.move_face["R"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["L"]
-        self.move_face["L"] = self.adj_mat[self.adj_mat.index(move_face["U"] + 1)]
+        self.moveFace["DL"] = self.moveFace["DR"]
+        self.moveFace["DR"] = self.moveFace["R"]
+        self.moveFace["R"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["L"]
+        self.moveFace["L"] = self.adjmat[self.adjmat.index(moveFace["U"] + 1)]
 
-    def z_prime(self):
-        self.move_face["DL"] = self.move_face["L"]
-        self.move_face["L"] = self.move_face["U"]
-        self.move_face["U"] = self.move_face["R"]
-        self.move_face["R"] = self.move_face["DR"]
-        self.move_face["DR"] = self.adj_mat[self.adj_mat.index(move_face["R"] + 1)]
+    def zPrime(self):
+        self.moveFace["DL"] = self.moveFace["L"]
+        self.moveFace["L"] = self.moveFace["U"]
+        self.moveFace["U"] = self.moveFace["R"]
+        self.moveFace["R"] = self.moveFace["DR"]
+        self.moveFace["DR"] = self.adjmat[self.adjmat.index(moveFace["R"] + 1)]
 
 class Tetrahedron(Triangle):
     def __init__(self, size):
@@ -287,11 +287,11 @@ class Tetrahedron(Triangle):
                                    (1,-1,-1),
                                    (-1,1,-1),
                                    (-1,-1,1)),
-                         adj_mat = ((1,2,3),  # 0
+                         adjmat = ((1,2,3),  # 0
                                     (0,3,2),  # 1
                                     (0,1,3),  # 2
                                     (0,2,1)), # 3
-                         move_face = {'U':0,
+                         moveFace = {'U':0,
                                       'R':1,
                                       'B':2,
                                       'L':3})
@@ -307,13 +307,13 @@ class Cube(Square):
                                    (-1,1,-1),
                                    (-1,-1,1),
                                    (-1,-1,-1)), 
-                         adj_mat = ((1,2,3,4),   # 0
+                         adjmat = ((1,2,3,4),   # 0
                                     (2,0,4,5),   # 1
                                     (3,0,1,5),   # 2
                                     (4,0,2,5),   # 3
                                     (1,0,3,5),   # 4
                                     (1,4,3,2)),  # 5
-                         move_face = {'U':0,
+                         moveFace = {'U':0,
                                       'F':1,
                                       'R':2,
                                       'B':3,
@@ -329,7 +329,7 @@ class Octahedron(Triangle):
                                  (0,-1,0),
                                  (0,0,1),
                                  (0,0,-1)),
-                         adj_mat = ((1,2,3),  # 0
+                         adjmat = ((1,2,3),  # 0
                                     (0,4,6),  # 1
                                     (0,6,5),  # 2
                                     (0,5,4),  # 3
@@ -337,7 +337,7 @@ class Octahedron(Triangle):
                                     (3,2,7),  # 5
                                     (2,1,7),  # 6
                                     (4,5,6)), # 7
-                         move_face = {})
+                         moveFace = {})
 
 class Dodecahedron(Pentagon):
     def __init__(self, size):
@@ -362,7 +362,7 @@ class Dodecahedron(Pentagon):
                                  (-1,1,-1),
                                  (-1,-1,1),
                                  (-1,-1,-1)),
-                         adj_mat = ((1,2,3,4,5),   # 0
+                         adjmat = ((1,2,3,4,5),   # 0
                                     (0,5,6,7,2),   # 1
                                     (0,1,7,8,3),   # 2
                                     (0,2,8,9,4),   # 3
@@ -374,7 +374,7 @@ class Dodecahedron(Pentagon):
                                     (3,8,11,10,4), # 9
                                     (4,9,11,6,5),  # 10
                                     (10,9,8,7,6)), # 11
-                         move_face = {'U':0,
+                         moveFace = {'U':0,
                                       'F':1,
                                       'R':2,
                                       'BR':3,
@@ -398,7 +398,7 @@ class Icosahedron(Triangle):
                                  (1/phi,-1,0),
                                  (-1/phi,1,0),
                                  (-1/phi,-1,0)),
-                         adj_mat = ((1,3,18),   # 0
+                         adjmat = ((1,3,18),   # 0
                                     (5,0,17),   # 1
                                     (3,6,19),   # 2
                                     (0,4,2),    # 3
@@ -418,4 +418,4 @@ class Icosahedron(Triangle):
                                     (16,12,1),  # 17
                                     (19,16,0),  # 18
                                     (15,18,2)), # 19
-                         move_face = {})
+                         moveFace = {})
