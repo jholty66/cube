@@ -110,23 +110,24 @@ class Solid:
                     if sticker.pos != self.move_face[move.name]:
                         sticker.pos = self.adj_mat[self.move_face[move.name]][(self.adj_mat[self.move_face[move.name]].index(sticker.pos) + dir) % self.num_sides]
 
+
     def slice_turn(self, move): pass
 
     # To be defined in child classes.
-    def x(): pass
-    def x_prime(): pass
-    def y(): pass
-    def y_prime(): pass
-    def z(): pass
-    def z_prime(): pass
+    def x(self): pass
+    def x_prime(self): pass
+    def y(self): pass
+    def y_prime(self): pass
+    def z(self): pass
+    def z_prime(self): pass
 
     # {(move.name move.prime): rotate_fn}
-    rotate = {('x', False): x(),
-              ('x', True): x_prime(),
-              ('y', False): y(),
-              ('y', True): y_prime(),
-              ('z', False): z(),
-              ('z', True): z_prime()}
+    rotate = {('x', False): x,
+              ('x', True): x_prime,
+              ('y', False): y,
+              ('y', True): y_prime,
+              ('z', False): z,
+              ('z', True): z_prime}
 
     def exec_alg(self, alg_str):
         for move in alg.create(alg_str):
