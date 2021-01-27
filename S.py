@@ -34,7 +34,12 @@ for i,f in enumerate(DM):
                 s=set()
                 if (f[j-1],f[j]) in [(F[J-1],F[J]) for J in R]:
                     if I in S:
-                        f.reverse();print('r')
+                        f.reverse()
                         for I in s:DM[I].reverse()
                     else:F.reverse();s.add(I)
                 S|=s
+
+if __name__=='__main__':
+    for r in Df:print(r)
+    print()
+    for r in DM:print(r)
