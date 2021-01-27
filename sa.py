@@ -24,9 +24,13 @@ def DFS(f):
                 if e==f[0] and set(f) not in [set(F) for F in Dfe]:Dfe.append(f)
             elif e not in f:DFS(f+[e])
 for e in De:DFS([e])
-print(Dfe);print()
+for f in Dfe:
+    for i,_ in enumerate(f):
+        if f[i-1][1]!=f[i][0]:f[i]=(f[i][1],f[i][0])
+for f in Dfe:print(f)
+print()
 
-Dfv=[[f[i][0] if f[i][0]!=f[i-1][0] else f[i][1] for i,_ in enumerate(f)] for f in Dfe]
+Dfv=[[e[0] for e in f] for f in Dfe]
 for f in Dfv:print(f)
 print()
 
