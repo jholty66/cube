@@ -21,7 +21,7 @@ def DFS(f):
     for e in De:
         if f[-1]==e[0]:
             if len(f)==5:
-                if e[1]==f[0] and set(f) not in [set(F) for F in Df]:Df.append(f)
+                if e[1]==f[0] and all(any(v not in F for v in f) for F in Df):Df.append(f)
             elif f[-2] not in e:DFS(f+[e[0]] if e[0]!=f[-1] else f+[e[1]])
 for e in De:DFS(list(e))
 
