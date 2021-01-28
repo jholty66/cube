@@ -1,4 +1,6 @@
 import math
+import pygame;from pygame.locals import *
+from OpenGL.GL import *;from OpenGL.GLU import *
 
 δ=0.01
 φ=(1+math.sqrt(5))/2
@@ -40,6 +42,16 @@ for i,f in enumerate(DM):
                 S|=s
 
 if __name__=='__main__':
-    for r in Df:print(r)
-    print()
-    for r in DM:print(r)
+    pygame.init();display=(800,600);pygame.display.set_mode(display,DOUBLEBUF|OPENGL)
+    gluPerspective(30,display[0]/display[1],0.1,50.0);glTranslatef(0.0,0.0,-10);glRotatef(0,0,0,0)
+    while True:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:pygame.quit();quit()
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glRotatef(1,1,1,1)
+        glBegin(GL_LINES)
+        for e in set(De):
+            for v in e:
+                glVertex3fv(Dv[v])
+        glEnd()
+        pygame.display.flip();pygame.time.wait(10)
