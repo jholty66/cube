@@ -13,14 +13,14 @@ class I:v=((0,1,φ),(0,1,-φ),(0,-1,φ),(0,-1,-φ),(1,φ,0),(1,-φ,0),(-1,φ,0),
 def d(v,V):return math.sqrt(sum((c-C)**2 for c,C in zip(v,V)))
 
 def DFS(f):
-    for e in s.e:
+    for e in s.ev:
         if f[-1]==e[0]:
             if len(f)==s.s:
-                if e[1]==f[0] and all(any(v not in F for v in f) for F in s.f):s.f.append(f)
+                if e[1]==f[0] and all(any(v not in F for v in f) for F in s.fv):s.fv.append(f)
             elif f[-2] not in e:DFS(f+[e[1]])
 
 for S in [T,H,O,D,I]:
-    s=S()
+    s=S();print(s)
 
     r=d(s.v[-2],s.v[-1])
     for i,v in enumerate(s.v[:-3]):
@@ -28,27 +28,38 @@ for S in [T,H,O,D,I]:
             R=d(v,V)
             if R<r:r=R
 
-    s.e=[(i,j) for i,v in enumerate(s.v) for j,V in enumerate(s.v) if d(v,V)<r+δ and i!=j]
+    s.ev=[(i,j) for i,v in enumerate(s.v) for j,V in enumerate(s.v) if d(v,V)<r+δ and i!=j]
 
-    s.f=[]
-    for e in s.e:DFS(list(e))
+    s.fv=[]
+    for e in s.ev:DFS(list(e))
 
-    s.M=[[s.f.index(F) for i in range(len(f)) for F in s.f if F!=f and f[i-1] in F and f[i] in F] for f in s.f]
+    s.fe=[[(f[i-1],f[i]) for i in range(len(f))] for f in s.fv]
+
+    s.vf=[[i for i,f in enumerate(s.fv) if v in f] for v in range(len(s.v))]
+
+    s.ef=[[i for i,f in enumerate(s.fe) if e in [set(E) for E in f]] for e in [set(E) for F in s.fe for E in F]]
+
+    s.m=[[s.fv.index(F) for i in range(len(f)) for F in s.fv if F!=f and f[i-1] in F and f[i] in F] for f in s.fv]
     R=range(s.s);sf=set()
-    for i,f in enumerate(s.M):
+    for i,f in enumerate(s.m):
         for j in R:
-            for I,F in enumerate(s.M):
+            for I,F in enumerate(s.m):
                 if I>i:
                     ss=set()
                     if (f[j-1],f[j]) in [(F[J-1],F[J]) for J in R]:
                         if I in sf:
                             f.reverse()
-                            for I in ss:s.M[I].reverse()
+                            for I in ss:s.m[I].reverse()
                         else:F.reverse();ss.add(I)
                     sf|=ss
 
-    print([(i,j) for i,v in enumerate(s.v) for j,V in enumerate(s.v) if d(v,V)<r+δ and i<j]);print()
-    for r in s.f:print(r)
+    for f in s.fv:print(f)
     print()
-    for r in s.M:print(r)
-    print();print()
+    for f in s.fe:print(f)
+    print()
+    for v in s.vf:print(v)
+    print()
+    for e in s.ef:print(e)
+    print()
+    for f in s.m:print(f)
+    print()
