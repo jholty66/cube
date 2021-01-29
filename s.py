@@ -1,6 +1,4 @@
 import math
-import pygame;from pygame.locals import *
-from OpenGL.GL import *;from OpenGL.GLU import *
 
 φ=(1+math.sqrt(5))/2
 
@@ -62,21 +60,3 @@ class I:
        (1,10,19),(15,14,10),(5,13,17),(6,13,19),(8,3,17),(14,11,16),(9,4,19),(15,12,18))
 
 if __name__=='__main__':
-    i=0;S=[T,H,O,D,I]
-    pygame.init();display=(1600,900);pygame.display.set_mode(display,DOUBLEBUF|OPENGL)
-    gluPerspective(30,display[0]/display[1],0.1,50.0);glTranslatef(0.0,0.0,-10);glRotatef(0,0,0,0)
-    while True:
-        s=S[i%5]()
-        for event in pygame.event.get():
-            if event.type==pygame.QUIT:pygame.quit();quit()
-            if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_LEFT:i-=1
-                elif event.key==pygame.K_RIGHT:i+=1
-        glRotatef(1,1,1,1)
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-        glBegin(GL_LINES)
-        for e in s.e:
-            for v in e:
-                glVertex3fv(s.v[v])
-        glEnd()
-        pygame.display.flip();pygame.time.wait(25)
