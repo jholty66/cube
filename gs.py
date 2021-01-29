@@ -28,7 +28,7 @@ for S in [T,H,O,D,I]:
             R=d(v,V)
             if R<r:r=R
 
-    s.ev=[(i,j) for i,v in enumerate(s.v) for j,V in enumerate(s.v) if d(v,V)<r+δ and i!=j]
+    s.ev=[(i,j) for i,v in enumerate(s.v) for j,V in enumerate(s.v) if d(v,V)<r+δ and i!=j] # edges undirected
 
     s.fv=[]
     for e in s.ev:DFS(list(e))
@@ -37,7 +37,8 @@ for S in [T,H,O,D,I]:
 
     s.vf=[[i for i,f in enumerate(s.fv) if v in f] for v in range(len(s.v))]
 
-    s.ef=dict([(tuple(e),[i for i,f in enumerate(s.fe) if e in [set(E) for E in f]]) for e in [set(E) for F in s.fe for E in F]])
+    s.ed=[(i,j) for i,v in enumerate(s.v) for j,V in enumerate(s.v) if d(v,V)<r+δ and i<j] # edges directed
+    s.ef=[[i for i,f in enumerate(s.fe) if set(e) in [set(E) for E in f]] for e in s.ed]
 
     s.m=[[s.fv.index(F) for i in range(len(f)) for F in s.fv if F!=f and f[i-1] in F and f[i] in F] for f in s.fv]
     R=range(s.s);sf=set()
@@ -59,7 +60,7 @@ for S in [T,H,O,D,I]:
     print()
     for v in s.vf:print(v)
     print()
-    for e in s.ef.values():print(e)
-    print()
+    for e in s.ef:print(e)
+    print(len(s.ef));print()
     for f in s.m:print(f)
     print()
