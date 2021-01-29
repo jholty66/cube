@@ -2,6 +2,9 @@ import math
 
 φ=(1+math.sqrt(5))/2
 
+class Sr:
+    def __init__(self,p,d):self.c=self.p=d;self.d=d
+    def __str__(self):return f'({self.c}, {self.p}, {self.d})'
 
 T:(3, # f
    ((-1,-1,-1),(-1,1,1),(1,-1,1),(1,1,-1)), # f
@@ -55,4 +58,16 @@ I=(3,
    ((3,1,11),(4,0,12),(4,3,7),(0,2,16),(1,2,18),(8,6,14),(9,5,15),(9,8,2),(5,7,16),(6,7,18),(12,11,13),(0,10,17),
     (1,10,19),(15,14,10),(5,13,17),(6,13,19),(8,3,17),(14,11,16),(9,4,19),(15,12,18)))
 
+class S:
+    def __init__(self,s,o):
+        self.s, self.v, self.ev, self.fv, self.vf, self.ef, self.m = s
+        
+        R=range(o//2)
+        self.ce=[[Sr(f,o//2)] for f in range(len(self.fv))] if o%2==1 else []
+        self.ed=sum([[[Sr(e[0],d1),Sr(e[1],d2)] for d1 in R for d2 in R if 0 in (d1,d2)] for e in self.ef],[]) if o%2==1 else []
+        self.co=sum([[[Sr(v[0],d1),Sr(v[1],d2),Sr(v[2],d3)] for d1 in R for d2 in R for d3 in R if 0 in (d1,d2,d3)] for v in self.vf],[])
 if __name__=='__main__':
+    s=S(H,3)
+    print(len(s.ce))
+    print(len(s.ed))
+    print(len(s.co))
