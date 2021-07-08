@@ -1,4 +1,3 @@
-from functools import reduce
 from math import sqrt
 E=enumerate;L=len;R=range;RL=lambda x:range(len(x))
 
