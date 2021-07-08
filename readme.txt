@@ -12,3 +12,8 @@ Support regular polydra
 Support n-polytopes
 Support cuboids
 OpenGL puzzle visualization
+
+Tree:
+a.py	algoritm library
+d.py	cube definitions
+t.py	tuple model of cube
