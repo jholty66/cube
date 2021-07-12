@@ -1,5 +1,6 @@
 from math import sqrt
 E=enumerate;L=len;R=range;RL=lambda x:range(len(x))
+φ=(1+sqrt(5))/2;δ=0.01
 
 def bfs(n,g):
  d=[0]+[n]*(n-1);p=[-1]*n;q=[0]
@@ -21,11 +22,11 @@ def converge(x,f):
 vv=[(x,y,z) for x in (1,-1) for y in (1,-1) for z in (1,-1)];n=len(vv)
 dm=[[sqrt(sum((c-C)**2 for c,C in zip(v,V))) for v in vv] for V in vv]
 el=min(d for r in dm for d in r if d)
-am=[[i for i,c in E(r) if el==c] for r in dm]
+am=[[i for i,x in E(y) if abs(x-el)<δ] for y in dm]
 ev=[{i,v} for i in R(n) for v in am[i] if i<v]
 fl=bfs(n,am)
 fv=[];[dfs([i],fl,am) for i in R(n)] # undirected
-fv=converge(fv,lambda fv:[v[::-1] if any((v[i-1],v[i])==(V[j-1],V[j]) for V in fv[:k] for i in R(fl) for j in R(fl)) else v for k,v in E(fv)])
+fv=converge(fv[:-1]+[fv[-1][::-1]],lambda fv:[f[::-1] if any((f[i-1],f[i])==(F[j-1],F[j]) for i in R(fl) for F in fv[k+1:] for j in R(fl)) else f for k,f in E(fv)]) # hack, passing fv does not work for dodecahedron and icosededron
 fe=[[ev.index({f[i-1],f[i]}) for i in R(fl)] for f in fv]
 vf=[[i for i,f in E(fv) if v in f] for v in R(n)]
 ef=[[i for i,f in E(fv) for j in R(fl) if {f[j-1],f[j]}==e] for e in ev]
