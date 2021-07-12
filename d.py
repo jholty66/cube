@@ -28,6 +28,6 @@ fl=bfs(n,am)
 fv=[];[dfs([i],fl,am) for i in R(n)] # undirected
 fv=converge(fv[:-1]+[fv[-1][::-1]],lambda fv:[f[::-1] if any((f[i-1],f[i])==(F[j-1],F[j]) for i in R(fl) for F in fv[k+1:] for j in R(fl)) else f for k,f in E(fv)]) # hack, passing fv does not work for dodecahedron and icosededron
 fe=[[ev.index({f[i-1],f[i]}) for i in R(fl)] for f in fv]
-vf=[[i for i,f in E(fv) if v in f] for v in R(n)]
-ef=[[i for i,f in E(fv) for j in R(fl) if {f[j-1],f[j]}==e] for e in ev]
 ff=[[fe.index(F) for e in f for F in fe for E in F if f!=F and e==E] for f in fe]
+vf=[[i,ff[i][j],ff[i][j-1]] for v in R(n) for i in RL(fv) for j in R(fl) if all(v in fv[k] for k in [i,ff[i][j-1],ff[i][j]])][::3]
+ef=[[i for i,f in E(fv) for j in R(fl) if {f[j-1],f[j]}==e] for e in ev]
