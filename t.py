@@ -1,4 +1,4 @@
-from d import *
+exec(open('a.py').read());exec(open('d.py').read())
 
 for f in RL(ff):
  for n in R(1,fl):
