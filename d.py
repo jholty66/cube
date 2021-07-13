@@ -9,15 +9,13 @@ def bfs(n,g):
   for c in am[x]:
    if d[c]==n:d[c]=1+d[x];p[c]=x;q.append(c)
    elif p[x]!=c and p[c]!=x:return d[x]+d[c]+1
-
 def dfs(p,l,g):
  for v in g[p[-1]]:
   if len(p)==l and v==p[0] and set(p) not in map(set,fv):fv.append(p)
   elif v not in p: dfs(p+[v],l,g) 
-
-def converge(x,f):
-    y=f(x)
-    return y if x==y else converge(y,f)
+def converge(x,f):y=f(x);return y if x==y else converge(y,f)
+def _p(*x):return ' '.join(''.join('wrgboy'[s] for s in c) for p in x for c in p)
+def p(*x):print(_p(*x))
 
 vv=[(x,y,z) for x in (1,-1) for y in (1,-1) for z in (1,-1)];n=len(vv)
 dm=[[sqrt(sum((c-C)**2 for c,C in zip(v,V))) for v in vv] for V in vv]
