@@ -14,7 +14,7 @@ def dfs(p,l,g):
   if len(p)==l and v==p[0] and set(p) not in map(set,fv):fv.append(p)
   elif v not in p: dfs(p+[v],l,g) 
 def converge(x,f):y=f(x);return y if x==y else converge(y,f)
-def _p(*x):return ' '.join(''.join('wrgboy'[s] for s in c) for p in x for c in p)
+def _p(*x):return ' '.join(''.join('ULFBRD'[s] for s in c) for p in x for c in p)
 def p(*x):print(_p(*x))
 
 vv=[(x,y,z) for x in (1,-1) for y in (1,-1) for z in (1,-1)];n=len(vv)
